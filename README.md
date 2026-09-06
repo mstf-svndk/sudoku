@@ -50,6 +50,8 @@ Yayınlandıktan sonra ana sayfa, paylaşımlı bağlantı, mobil dokunma, ana e
 
 Tohumlu üretici, geçerli bir çözüm tahtasından sayıları çıkarır. MRV geri izleme çözücüsü her çıkarma için tek çözümü doğrular. Arama bütçesi aşılırsa sayı korunur; doğrulanmamış bulmaca kabul edilmez. İlk adım ve Kolay seviyeleri tek aday elemesiyle çözülebilir. Daha üst seviyeler daha az başlangıç sayısı hedefler; tek çözüm sınırı nedeniyle özellikle 4×4'te komşu seviyelerin verilen sayı sayıları eşit olabilir. Uzman seviyesi belirli ileri Sudoku tekniklerini zorunlu kılan bir insan zorluk derecelendirmesi değildir.
 
-Testler tüm boyut/seviye kombinasyonları ve farklı tohumlarda satır/sütun/kutu kurallarını, tek çözümü, günlük tarih sınırını, kayıt doğrulamasını, değiştirilemeyen sayıları, notları, geri almayı, yarışmacı bağımsızlığını ve yıldız tekrarını kapsar. Otomatik gerçek tarayıcı etkileşim testi bu ilk teslimde çalıştırılmadı.
+Testler tüm boyut/seviye kombinasyonları ve farklı tohumlarda satır/sütun/kutu kurallarını, tek çözümü, günlük tarih sınırını, kayıt doğrulamasını, değiştirilemeyen sayıları, notları, geri almayı, yarışmacı bağımsızlığını ve yıldız tekrarını kapsar.
+
+6 Eylül 2026 görünüm düzeltmesinde gerçek tarayıcıyla masaüstü ve telefon ölçülerinde 4×4, 6×6, 9×9, 12×12 tahtalar; günlük ve sınıf/odak görünümü; iki kişilik yarışın hazır, oynanıyor ve duraklatılmış durumları kontrol edildi. Tahta ve hücre boyutları ile sayı düğmelerinin tahta dışında kaldığı ölçüldü. Sayı girişi, geri alma, oyuncu bağımsızlığı ve mobil yardım/paylaşım pencereleri denendi. Bu kontroller fiziksel iOS/Android cihaz testinin veya tüm tarayıcılarda kapsamlı uçtan uca testin yerine geçmez.
 
 Uygun tarayıcılarda isteğe bağlı `document.modelContext` üzerinden görünür oyun durumunu okuyan ve oyunu duraklatan iki WebMCP aracı kaydolur. Standart desteği olmayan tarayıcılarda normal oyun çalışır; WebMCP araçları destekleyen canlı bir bağlamda henüz doğrulanmadı.

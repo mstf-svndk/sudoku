@@ -155,11 +155,16 @@ export function GameBoard({
           </span>
         </div>
       )}
-      <div className="board-wrap">
-        <fieldset
+      <section
+        className="board-wrap"
+        aria-label={`${size} çarpı ${size} Sudoku; ok tuşlarıyla gezinebilirsin`}
+      >
+        <div
           className={`sudoku-board size-${size} ${paused || ready ? 'concealed' : ''}`}
-          aria-label={`${size} çarpı ${size} Sudoku; ok tuşlarıyla gezinebilirsin`}
-          style={{ gridTemplateColumns: `repeat(${size},1fr)` }}
+          style={{
+            gridTemplateColumns: `repeat(${size},minmax(0,1fr))`,
+            gridTemplateRows: `repeat(${size},minmax(0,1fr))`,
+          }}
           inert={paused || ready}
         >
           {player.values.map((value, i) => {
@@ -233,7 +238,7 @@ export function GameBoard({
               </button>
             );
           })}
-        </fieldset>
+        </div>
         {(paused || ready) && (
           <div className="board-overlay">
             <span className="pause-circle">{ready ? <Flag /> : <Pause />}</span>
@@ -249,7 +254,7 @@ export function GameBoard({
             </button>
           </div>
         )}
-      </div>
+      </section>
       <div className="board-progress">
         <span>
           {completed ? 'Tamamlandı!' : `${filled} / ${total} kare dolduruldu`}
