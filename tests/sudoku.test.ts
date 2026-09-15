@@ -185,6 +185,7 @@ void test('Reload restores notes and history, pauses started games and rejects c
 void test('Completion score rewards difficulty, speed and clean play', () => {
   const easy = generatePuzzle(6, 0, 99);
   const hard = generatePuzzle(6, 4, 99);
+  const expert = generatePuzzle(12, 4, 99);
   const cleanPlayer = newPlayer(easy);
   const fast = calculateScore(easy, cleanPlayer, 10);
   const slow = calculateScore(easy, cleanPlayer, fast.targetTime * 2);
@@ -195,6 +196,8 @@ void test('Completion score rewards difficulty, speed and clean play', () => {
   assert.ok(
     calculateScore(easy, { hints: 2, mistakes: 3 }, 10).total < fast.total,
   );
+  assert.equal(calculateScore(expert, newPlayer(expert), 0).total, 1000);
+  assert.ok(fast.total <= 1000);
 });
 void test('Stored solution cannot replace regenerated authoritative solution', () => {
   const s = newSession(4, 1, 7);

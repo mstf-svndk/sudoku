@@ -254,29 +254,31 @@ export function calculateScore(
   elapsed: number,
 ): ScoreBreakdown {
   const blanks = puzzle.givens.filter((value) => value === 0).length;
-  const difficulty = [1, 1.35, 1.75, 2.25, 2.9][puzzle.level];
+  const sizeBase: Record<Size, number> = {
+    4: 80,
+    6: 160,
+    9: 280,
+    12: 400,
+  };
+  const difficultyBase = [0, 75, 150, 225, 300][puzzle.level];
   const secondsPerBlank = [18, 24, 32, 45, 60][puzzle.level];
-  const base = Math.round(blanks * 40 * difficulty);
+  const base = sizeBase[puzzle.size] + difficultyBase;
   const targetTime = Math.max(1, Math.round(blanks * secondsPerBlank));
   const speedRatio = Math.max(
     0,
     Math.min(1, (targetTime * 1.25 - Math.max(0, elapsed)) / targetTime),
   );
-  const speedBonus = Math.round(base * 0.4 * speedRatio);
-  const cleanBonus =
-    player.hints === 0 && player.mistakes === 0 ? Math.round(base * 0.1) : 0;
-  const hintPenalty = Math.min(
-    Math.round(base * 0.5),
-    Math.round(base * 0.1 * player.hints),
-  );
-  const mistakePenalty = Math.min(
-    Math.round(base * 0.35),
-    Math.round(base * 0.04 * player.mistakes),
-  );
+  const speedBonus = Math.round(200 * speedRatio);
+  const cleanBonus = player.hints === 0 && player.mistakes === 0 ? 100 : 0;
+  const hintPenalty = Math.min(300, 60 * player.hints);
+  const mistakePenalty = Math.min(200, 20 * player.mistakes);
   return {
-    total: Math.max(
-      Math.round(base * 0.25),
-      base + speedBonus + cleanBonus - hintPenalty - mistakePenalty,
+    total: Math.min(
+      1000,
+      Math.max(
+        100,
+        base + speedBonus + cleanBonus - hintPenalty - mistakePenalty,
+      ),
     ),
     base,
     speedBonus,

@@ -1408,31 +1408,48 @@ footer {
 .focus-mode .sudoku-board.size-12 .cell {
   font-size: 27px;
 }
-.focus-mode .board-tools {
-  margin-top: 9px;
-}
-.focus-mode .game-heading {
-  margin-bottom: 7px;
-}
 .focus-mode .board-wrap {
-  max-width: min(600px, calc(100dvh - 310px));
+  max-width: min(600px, calc(100dvh - 270px));
 }
-.focus-mode:has(.race-workspace) .game-heading,
-.focus-mode:has(.race-workspace) .keyboard-tip,
+.focus-mode .game-heading,
+.focus-mode .keyboard-tip,
+.focus-mode .symbol-key,
 .focus-mode:has(.race-workspace) .board-message {
   display: none;
 }
-.focus-mode:has(.race-workspace) .game-statusbar {
+.focus-mode .game-statusbar {
   padding-bottom: 4px;
   margin-bottom: 2px;
 }
-.focus-mode:has(.race-workspace) .mode-note {
+.focus-mode .mode-note {
   padding: 5px 8px;
   margin-bottom: 5px;
   align-items: center;
 }
-.focus-mode:has(.race-workspace) .mode-note > svg {
+.focus-mode .mode-note > svg {
   margin-top: 0;
+}
+.focus-mode .board-progress {
+  margin-top: 5px;
+}
+.focus-mode .number-pad {
+  margin-top: 7px;
+}
+.focus-mode .number-pad.large-pad:has(button:nth-child(12)) {
+  grid-template-columns: repeat(12, 1fr);
+}
+.focus-mode .number-pad button {
+  min-height: 40px;
+  padding: 3px 0;
+}
+.focus-mode .board-tools {
+  margin-top: 6px;
+  padding-top: 5px;
+}
+.focus-mode .board-tools > button {
+  min-height: 38px;
+  flex-direction: row;
+  gap: 4px;
 }
 .focus-mode:has(.race-workspace) .player-title {
   margin: 0 0 5px;
@@ -1440,31 +1457,8 @@ footer {
 .focus-mode:has(.race-workspace) .board-wrap {
   max-width: min(600px, calc(100dvh - 300px));
 }
-.focus-mode:has(.race-workspace) .board-progress {
-  margin-top: 5px;
-}
-.focus-mode:has(.race-workspace) .number-pad {
-  margin-top: 7px;
-}
-.focus-mode:has(.race-workspace)
-  .number-pad.large-pad:has(button:nth-child(12)) {
-  grid-template-columns: repeat(12, 1fr);
-}
-.focus-mode:has(.race-workspace) .number-pad button {
-  min-height: 40px;
-  padding: 3px 0;
-}
-.focus-mode:has(.race-workspace) .board-tools {
-  margin-top: 6px;
-  padding-top: 5px;
-}
-.focus-mode:has(.race-workspace) .board-tools > button {
-  min-height: 38px;
-  flex-direction: row;
-  gap: 4px;
-}
 @media (min-width: 851px) {
-  .focus-mode:has(.race-workspace) {
+  .focus-mode {
     height: 100dvh;
     overflow: hidden;
   }

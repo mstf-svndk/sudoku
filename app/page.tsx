@@ -1066,14 +1066,21 @@ export default function Home() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={celebrate} onOpenChange={setCelebrate}>
+      <Dialog
+        open={celebrate}
+        onOpenChange={(open) => {
+          if (mode !== 'versus' || open) setCelebrate(open);
+        }}
+      >
         <DialogContent
           className="workshop-dialog celebration"
           showCloseButton={false}
         >
-          <DialogClose className="dialog-x" aria-label="Kapat">
-            <X size={20} />
-          </DialogClose>
+          {mode !== 'versus' && (
+            <DialogClose className="dialog-x" aria-label="Kapat">
+              <X size={20} />
+            </DialogClose>
+          )}
           <div className="celebration-stars">
             <Star />
             <Trophy />
@@ -1153,12 +1160,14 @@ export default function Home() {
               start({ mode: mode === 'daily' ? 'solo' : mode, size, level })
             }
           >
-            Bir bulmaca daha
+            {mode === 'versus' ? 'Yeni yarış' : 'Bir bulmaca daha'}
             <ArrowRight size={18} />
           </button>
-          <button className="text-button" onClick={() => setCelebrate(false)}>
-            Tamamladığım tahtayı gör
-          </button>
+          {mode !== 'versus' && (
+            <button className="text-button" onClick={() => setCelebrate(false)}>
+              Tamamladığım tahtayı gör
+            </button>
+          )}
         </DialogContent>
       </Dialog>
 
