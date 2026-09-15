@@ -58,6 +58,7 @@ import {
   type Size,
 } from '@/lib/sudoku';
 import {
+  calculateScore,
   emptyStats,
   isComplete,
   newSession,
@@ -148,6 +149,8 @@ export default function Home() {
   const winner = game.players.findIndex((p) => isComplete(p, game.puzzle)),
     finished = winner >= 0,
     mode = game.mode;
+  const resultPlayer = game.players[Math.max(0, winner)];
+  const resultScore = calculateScore(game.puzzle, resultPlayer, game.elapsed);
   const blocked =
     game.paused || help || share || !!pending || installHelp || busy;
   const raceReady = mode === 'versus' && !game.started;
@@ -267,6 +270,14 @@ export default function Home() {
     return () => document.removeEventListener('visibilitychange', hide);
   }, []);
   useEffect(() => {
+    const syncFullscreen = () => {
+      if (!document.fullscreenElement) setFocus(false);
+    };
+    document.addEventListener('fullscreenchange', syncFullscreen);
+    return () =>
+      document.removeEventListener('fullscreenchange', syncFullscreen);
+  }, []);
+  useEffect(() => {
     if (!loaded || !finished || recorded.current === game.id) return;
     recorded.current = game.id;
     const next = recordWin(
@@ -354,6 +365,26 @@ export default function Home() {
   }
   function resume() {
     setGame((g) => ({ ...g, paused: false, started: true }));
+  }
+  async function toggleFullscreen() {
+    if (focus) {
+      setFocus(false);
+      if (document.fullscreenElement && document.exitFullscreen)
+        await document.exitFullscreen().catch(() => undefined);
+      return;
+    }
+    setFocus(true);
+    if (
+      !document.fullscreenElement &&
+      document.documentElement.requestFullscreen
+    )
+      await document.documentElement
+        .requestFullscreen()
+        .catch(() =>
+          setStatus(
+            'Tarayıcı tam ekrana izin vermedi; oyun alanı yine odak görünümünde açıldı.',
+          ),
+        );
   }
   function openShare() {
     const url = new URL(window.location.href);
@@ -715,11 +746,9 @@ export default function Home() {
                 </button>
                 <button
                   className="icon-button"
-                  onClick={() => setFocus((v) => !v)}
-                  aria-label={
-                    focus ? 'Normal görünüme dön' : 'Odak görünümünü aç'
-                  }
-                  title={focus ? 'Normal görünüm' : 'Odak görünümü'}
+                  onClick={() => void toggleFullscreen()}
+                  aria-label={focus ? 'Tam ekrandan çık' : 'Tam ekran oyunu aç'}
+                  title={focus ? 'Tam ekrandan çık' : 'Tam ekran'}
                 >
                   {focus ? <Minimize size={17} /> : <Maximize size={17} />}
                 </button>
@@ -752,7 +781,8 @@ export default function Home() {
                 <UsersRound size={17} />
                 <p>
                   Aynı cihazda iki oyuncu. İlk doğru tamamlayan kazanır. Tablet
-                  veya geniş ekran önerilir.
+                  veya geniş ekran önerilir. Akıllı tahtada tam ekranı açınca
+                  iki oyuncu aynı anda dokunabilir.
                 </p>
               </div>
             )}
@@ -778,8 +808,8 @@ export default function Home() {
                 <Trophy size={20} />
                 <span>
                   {mode === 'versus'
-                    ? `${winner === 0 ? 'Turuncu' : 'Yeşil'} takım kazandı. İkinize de tebrikler!`
-                    : 'Harika iş! Bütün sayılar yerini buldu.'}
+                    ? `${winner === 0 ? 'Turuncu' : 'Yeşil'} takım kazandı. ${resultScore.total.toLocaleString('tr-TR')} puan!`
+                    : `Harika iş! ${resultScore.total.toLocaleString('tr-TR')} puan kazandın.`}
                 </span>
                 <button onClick={() => setCelebrate(true)}>Sonuç</button>
               </div>
@@ -1060,14 +1090,51 @@ export default function Home() {
               ? 'Güzel bir yarıştı. Şimdi takımları değiştirip yeniden deneyebilirsiniz.'
               : 'Düşündün, denedin ve başardın. Kendinle gurur duyabilirsin.'}
           </DialogDescription>
+          <div
+            className="score-hero"
+            aria-label={`Oyun puanı ${resultScore.total}`}
+          >
+            <span>
+              {mode === 'versus' ? 'KAZANAN TAKIMIN PUANI' : 'OYUN PUANIN'}
+            </span>
+            <strong>{resultScore.total.toLocaleString('tr-TR')}</strong>
+            <small>Boyut, zorluk, süre ve oyun desteğine göre</small>
+          </div>
+          <div className="score-breakdown">
+            <span>
+              Boyut + zorluk{' '}
+              <strong>+{resultScore.base.toLocaleString('tr-TR')}</strong>
+            </span>
+            <span>
+              Süre bonusu{' '}
+              <strong>+{resultScore.speedBonus.toLocaleString('tr-TR')}</strong>
+            </span>
+            <span>
+              Kusursuz çözüm{' '}
+              <strong>+{resultScore.cleanBonus.toLocaleString('tr-TR')}</strong>
+            </span>
+            <span>
+              İpucu ve yanlışlar{' '}
+              <strong>
+                −
+                {(
+                  resultScore.hintPenalty + resultScore.mistakePenalty
+                ).toLocaleString('tr-TR')}
+              </strong>
+            </span>
+          </div>
           <div className="result-metrics">
             <div>
               <strong>{formatTime(game.elapsed)}</strong>
               <span>Oyun süresi</span>
             </div>
             <div>
-              <strong>{game.players[Math.max(0, winner)].hints}</strong>
+              <strong>{resultPlayer.hints}</strong>
               <span>Açılan sayı</span>
+            </div>
+            <div>
+              <strong>{resultPlayer.mistakes}</strong>
+              <span>Yanlış hamle</span>
             </div>
             <div>
               <strong>

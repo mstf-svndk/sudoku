@@ -7,7 +7,11 @@ import {
   type Size,
 } from './sudoku.ts';
 export type Snapshot = { values: number[]; notes: number[][] };
-export type Player = Snapshot & { history: Snapshot[]; hints: number };
+export type Player = Snapshot & {
+  history: Snapshot[];
+  hints: number;
+  mistakes: number;
+};
 export type Session = {
   version: 1;
   id: string;
@@ -24,6 +28,7 @@ export function newPlayer(p: Puzzle): Player {
     notes: p.givens.map(() => []),
     history: [],
     hints: 0,
+    mistakes: 0,
   };
 }
 export function newSession(
@@ -86,6 +91,10 @@ export function move(
     ...player,
     values,
     notes,
+    mistakes:
+      !noteMode && value !== 0 && value !== puzzle.solution[index]
+        ? player.mistakes + 1
+        : player.mistakes,
     history: [
       ...player.history,
       { values: player.values, notes: player.notes },
@@ -144,13 +153,23 @@ export function restoreSession(raw: string): Session | null {
           validSnapshot(p) &&
           Number.isInteger(p.hints) &&
           p.hints >= 0 &&
+          (p.mistakes === undefined ||
+            (Number.isInteger(p.mistakes) && p.mistakes >= 0)) &&
           Array.isArray(p.history) &&
           p.history.length <= 80 &&
           p.history.every(validSnapshot),
       )
     )
       return null;
-    return { ...data, puzzle, paused: data.started };
+    return {
+      ...data,
+      puzzle,
+      players: data.players.map((p: Player) => ({
+        ...p,
+        mistakes: p.mistakes ?? 0,
+      })),
+      paused: data.started,
+    };
   } catch {
     return null;
   }
@@ -212,5 +231,58 @@ export function recordWin(
           ? stats.streak + 1
           : 1,
     best: stats.best === null ? elapsed : Math.min(stats.best, elapsed),
+  };
+}
+
+export type ScoreBreakdown = {
+  total: number;
+  base: number;
+  speedBonus: number;
+  cleanBonus: number;
+  hintPenalty: number;
+  mistakePenalty: number;
+  targetTime: number;
+};
+
+/**
+ * A completion-first score: board size and difficulty set the base, finishing
+ * quickly can only add a bonus, while help and wrong entries reduce it.
+ */
+export function calculateScore(
+  puzzle: Puzzle,
+  player: Pick<Player, 'hints' | 'mistakes'>,
+  elapsed: number,
+): ScoreBreakdown {
+  const blanks = puzzle.givens.filter((value) => value === 0).length;
+  const difficulty = [1, 1.35, 1.75, 2.25, 2.9][puzzle.level];
+  const secondsPerBlank = [18, 24, 32, 45, 60][puzzle.level];
+  const base = Math.round(blanks * 40 * difficulty);
+  const targetTime = Math.max(1, Math.round(blanks * secondsPerBlank));
+  const speedRatio = Math.max(
+    0,
+    Math.min(1, (targetTime * 1.25 - Math.max(0, elapsed)) / targetTime),
+  );
+  const speedBonus = Math.round(base * 0.4 * speedRatio);
+  const cleanBonus =
+    player.hints === 0 && player.mistakes === 0 ? Math.round(base * 0.1) : 0;
+  const hintPenalty = Math.min(
+    Math.round(base * 0.5),
+    Math.round(base * 0.1 * player.hints),
+  );
+  const mistakePenalty = Math.min(
+    Math.round(base * 0.35),
+    Math.round(base * 0.04 * player.mistakes),
+  );
+  return {
+    total: Math.max(
+      Math.round(base * 0.25),
+      base + speedBonus + cleanBonus - hintPenalty - mistakePenalty,
+    ),
+    base,
+    speedBonus,
+    cleanBonus,
+    hintPenalty,
+    mistakePenalty,
+    targetTime,
   };
 }

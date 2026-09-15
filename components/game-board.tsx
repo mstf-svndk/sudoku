@@ -76,6 +76,28 @@ export function GameBoard({
       );
     }
   };
+  const onDirectPointer = (
+    event: React.PointerEvent<HTMLButtonElement>,
+    action: () => void,
+  ) => {
+    if (!race) return;
+    event.preventDefault();
+    action();
+  };
+  const onAccessibleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    action: () => void,
+  ) => {
+    if (race && event.detail > 0) return;
+    action();
+  };
+  const selectCell = (i: number) => {
+    if (disabled) return;
+    setSelected(i);
+    setHint(null);
+    if (givens[i])
+      setMessage('Bu sayı başlangıçta verildi. Boş bir kare seçebilirsin.');
+  };
   const requestHint = () => {
     if (disabled) return;
     const wrong = player.values.findIndex((v, i) => v && v !== solution[i]);
@@ -183,16 +205,12 @@ export function GameBoard({
                 aria-label={`${Math.floor(i / size) + 1}. satır, ${(i % size) + 1}. sütun: ${value ? symbol(value) : 'boş'}${givens[i] ? ', sabit sayı' : ''}${wrong ? ', tekrar düşün' : ''}${player.notes[i].length ? `, notlar ${player.notes[i].map(symbol).join(', ')}` : ''}`}
                 aria-pressed={selected === i}
                 aria-disabled={disabled || !!givens[i]}
-                onClick={() => {
-                  if (!disabled) {
-                    setSelected(i);
-                    setHint(null);
-                    if (givens[i])
-                      setMessage(
-                        'Bu sayı başlangıçta verildi. Boş bir kare seçebilirsin.',
-                      );
-                  }
-                }}
+                onPointerDown={(event) =>
+                  onDirectPointer(event, () => selectCell(i))
+                }
+                onClick={(event) =>
+                  onAccessibleClick(event, () => selectCell(i))
+                }
                 className={`cell ${givens[i] ? 'given' : 'entered'} ${related ? 'related' : ''} ${same ? 'same-value' : ''} ${selected === i ? 'selected' : ''} ${wrong ? 'wrong' : ''}`}
                 style={{
                   borderRightWidth:
@@ -271,7 +289,8 @@ export function GameBoard({
             <button
               key={n}
               disabled={disabled}
-              onClick={() => input(n)}
+              onPointerDown={(event) => onDirectPointer(event, () => input(n))}
+              onClick={(event) => onAccessibleClick(event, () => input(n))}
               aria-label={`${symbol(n)} ${noteMode ? 'notunu ekle' : 'yerleştir'}`}
               className={remaining <= 0 ? 'number-complete' : ''}
             >

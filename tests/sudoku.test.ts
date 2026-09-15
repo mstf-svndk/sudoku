@@ -23,6 +23,7 @@ import {
   recordWin,
   emptyStats,
   restoreStats,
+  calculateScore,
 } from '../lib/game.ts';
 
 for (const size of SIZES)
@@ -125,6 +126,10 @@ void test('Moves, fixed clues, notes, erase and undo preserve board history', ()
   assert.equal(undo(written).values[i], 0);
   assert.equal(move(written, p, i, 0).values[i], 0);
   assert.deepEqual(initial.notes[i], []);
+  const wrongValue = p.solution[i] === 1 ? 2 : 1;
+  const wrong = move(initial, p, i, wrongValue);
+  assert.equal(wrong.mistakes, 1);
+  assert.equal(undo(wrong).mistakes, 1);
 });
 void test('Completion checks all cells and all values', () => {
   const p = generatePuzzle(4, 0, 10),
@@ -159,6 +164,10 @@ void test('Reload restores notes and history, pauses started games and rejects c
   assert.equal(restored.paused, true);
   assert.deepEqual(restored.players, s.players);
   assert.equal(restored.elapsed, 39);
+  const legacy = structuredClone(s) as unknown as Record<string, unknown>;
+  for (const player of legacy.players as Record<string, unknown>[])
+    delete player.mistakes;
+  assert.equal(restoreSession(JSON.stringify(legacy))?.players[0].mistakes, 0);
   for (const raw of [
     '{',
     'null',
@@ -171,6 +180,21 @@ void test('Reload restores notes and history, pauses started games and rejects c
   const corrupt = structuredClone(s);
   corrupt.players[0].values[s.puzzle.givens.findIndex(Boolean)] = 0;
   assert.equal(restoreSession(JSON.stringify(corrupt)), null);
+});
+
+void test('Completion score rewards difficulty, speed and clean play', () => {
+  const easy = generatePuzzle(6, 0, 99);
+  const hard = generatePuzzle(6, 4, 99);
+  const cleanPlayer = newPlayer(easy);
+  const fast = calculateScore(easy, cleanPlayer, 10);
+  const slow = calculateScore(easy, cleanPlayer, fast.targetTime * 2);
+  assert.ok(fast.total > slow.total);
+  assert.ok(fast.speedBonus > 0);
+  assert.equal(slow.speedBonus, 0);
+  assert.ok(calculateScore(hard, newPlayer(hard), 10).base > fast.base);
+  assert.ok(
+    calculateScore(easy, { hints: 2, mistakes: 3 }, 10).total < fast.total,
+  );
 });
 void test('Stored solution cannot replace regenerated authoritative solution', () => {
   const s = newSession(4, 1, 7);
