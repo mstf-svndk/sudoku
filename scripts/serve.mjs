@@ -19,7 +19,7 @@ createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(
       new URL(req.url, 'http://localhost').pathname,
-    );
+    ).replace(/\/$/, '') || '/';
     let target = resolve(
       root,
       '.' + (pathname === '/' ? '/index.html' : pathname),
@@ -29,8 +29,12 @@ createServer(async (req, res) => {
       res.end();
       return;
     }
-    if ((await stat(target)).isDirectory())
-      target = resolve(target, 'index.html');
+    try {
+      if ((await stat(target)).isDirectory())
+        target = resolve(target, 'index.html');
+    } catch {
+      if (!extname(target)) target += '.html';
+    }
     res.writeHead(200, {
       'Content-Type': mime[extname(target)] || 'application/octet-stream',
       'Cache-Control': 'no-cache',

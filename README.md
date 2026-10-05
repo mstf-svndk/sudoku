@@ -1,6 +1,13 @@
-# Sudoku Atölyesi
+# Zihin Atölyesi
 
-Çocukların sınıfta veya tek başına, yetişkinlerin de kendi seviyesinde oynayabileceği Türkçe Sudoku. TypeScript, React ve Vinext/Vite ile hazırlanır; tamamen statik dosyalar olarak yayınlanır. Kullanıcı girişi, veritabanı, API anahtarı ve ücretli servis gerekmez.
+Sudoku Atölyesi ana oyun olarak kalır. Başlangıç ekranından Sudoku, SOS ve Kelime Avı seçilir. TypeScript, React ve Vinext/Vite ile hazırlanır; tamamen statik dosyalar olarak yayınlanır. Kullanıcı girişi, veritabanı, API anahtarı ve ücretli servis gerekmez.
+
+## Oyun seçimi
+
+- `/`: Sade oyun kartları.
+- `/sudoku`: Mevcut tüm Sudoku modları, yerel kayıt, yıldızlar ve günlük seri. Eski `/?p=...` bulmaca bağlantıları bu ekrana aktarılır.
+- `/sos`: 5×5 tahtada iki kişi veya kolay/orta/zor yapay zekâ. Yatay, dikey veya çapraz her SOS puan verir ve aynı oyuncuya ek hamle kazandırır. Tahta dolunca yüksek puanlı oyuncu raundu kazanır; 3, 5 veya 10 galibiyete ilk ulaşan seriyi kazanır. Beraberlik galibiyet sayılmaz.
+- `/kelime-avi`: Kategorili hazır kelimeler veya aynı cihazda iki kişinin yazdığı gizli kelime. Türkçe harf klavyesi, ipucu ve ayarlanabilir yanlış tahmin hakkı içerir.
 
 ## Oyun
 

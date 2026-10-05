@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'Sudoku Atölyesi — Her yaşta bir keşif',
+  title: 'Zihin Atölyesi — Sudoku, SOS ve Kelime Avı',
   description:
-    'Çocuklardan yetişkinlere: farklı boyutlar, seviyeler, günlük bulmacalar ve iki kişilik Sudoku. Ücretsiz, reklamsız ve girişsiz.',
+    'Sudoku, SOS ve Kelime Avı: her yaşta düşünerek oyna. Ücretsiz, reklamsız ve girişsiz.',
   manifest: '/manifest.webmanifest',
   icons: { icon: '/icon.svg', apple: '/icon-192.png' },
 };

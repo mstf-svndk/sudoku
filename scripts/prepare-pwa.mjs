@@ -42,7 +42,8 @@ self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
     // Use this version's shell and assets together. A waiting update activates
     // after all old tabs close, so an in-progress game is never force-reloaded.
-    event.respondWith(caches.open(CACHE).then(async cache => (await cache.match('/')) || fetch(event.request)));
+    const page = url.pathname === '/' ? '/index.html' : url.pathname.replace(/\\/$/, '') + '.html';
+    event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(page)) || fetch(event.request)));
   } else if (ASSETS.includes(url.pathname)) {
     event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(url.pathname)) || fetch(event.request)));
   }

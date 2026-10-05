@@ -2087,3 +2087,134 @@ footer {
     font-size: 10px;
   }
 }
+
+/* Zihin Atölyesi game selection and independent game modules */
+.home-main, .sos-main, .word-main {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 44px 36px 70px;
+}
+.home-intro { text-align: center; margin: 22px 0 38px; }
+.home-kicker { display: inline-flex; align-items: center; gap: 7px; color: #467767; font-size: 12px; font-weight: 850; letter-spacing: 1.6px; }
+.home-intro h1 { font-size: clamp(34px, 5vw, 54px); margin: 12px 0; }
+.home-intro h1 span, .sos-heading h1 span { color: var(--orange); }
+.home-intro p, .sos-heading p { color: var(--muted-foreground); margin: 0; line-height: 1.6; }
+.workshop-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.workshop-game-card { display: flex; flex-direction: column; min-width: 0; min-height: 380px; padding: 22px; border: 1px solid var(--border); border-radius: 22px; background: #fff; box-shadow: 0 12px 32px #2433310b; transition: transform .2s, box-shadow .2s; }
+.workshop-game-card:hover { transform: translateY(-4px); box-shadow: 0 18px 35px #2433311a; }
+.choice-art { height: 120px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 23px; }
+.sudoku-art { background: #fff1e8; }
+.sudoku-art span { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 9px; background: white; color: #be5a31; font-weight: 850; font-size: 25px; box-shadow: 0 3px 8px #ba674029; }
+.sos-art { background: #eaf4ee; }
+.sos-art span { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 10px; background: white; color: #286753; font-size: 30px; font-weight: 850; box-shadow: 0 3px 8px #28725a24; }
+.word-art { color: #5959a6; background: #efedfa; }
+.choice-copy { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.choice-tag { color: #718078; font-size: 10px; letter-spacing: 1.5px; font-weight: 850; }
+.choice-copy strong { font-size: 26px; line-height: 1.1; }
+.choice-copy > span:last-child { color: #5e6e69; font-size: 14px; line-height: 1.6; }
+.choice-go { display: flex; align-items: center; justify-content: space-between; margin-top: 23px; padding-top: 17px; border-top: 1px solid #e9eeeb; color: #bc4f27; font-weight: 800; font-size: 14px; }
+.home-footnote { text-align: center; color: #75827e; font-size: 13px; margin: 30px 0 0; }
+.sos-heading { margin-bottom: 28px; }
+.sos-heading h1 { font-size: clamp(36px, 5vw, 52px); margin: 6px 0; }
+.sos-setup, .word-setup, .word-pass, .word-game, .sos-game-panel, .sos-side { background: #fff; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 28px #2433310b; }
+.sos-setup, .word-setup { max-width: 720px; padding: 28px; }
+.sos-setup h2, .word-setup h2, .sos-side h2 { margin: 0 0 22px; font-size: 23px; }
+.sos-field { display: grid; gap: 10px; margin: 0 0 24px; }
+.sos-field > span { font-size: 14px; font-weight: 800; }
+.sos-field small { color: var(--muted-foreground); }
+.sos-options { display: flex; flex-wrap: wrap; gap: 9px; }
+.sos-options button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 17px; border: 1.5px solid #dae3de; border-radius: 11px; background: #fff; color: #374c43; font-size: 14px; font-weight: 750; }
+.sos-options button.selected { border-color: #31765e; color: #1e6049; background: #eaf5ee; box-shadow: inset 0 0 0 1px #31765e; }
+.sos-start { width: 100%; justify-content: center; min-height: 52px; }
+.sos-rule { color: var(--muted-foreground); font-size: 13px; line-height: 1.6; margin: 18px 0 0; }
+.sos-play-layout { display: grid; grid-template-columns: minmax(0, 690px) minmax(220px, 1fr); gap: 20px; align-items: start; }
+.sos-game-panel { padding: 22px; min-width: 0; }
+.sos-scoreline { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; }
+.sos-scoreline > div { display: flex; flex-direction: column; gap: 3px; border: 1.5px solid #e2e8e4; border-radius: 12px; padding: 11px 13px; }
+.sos-scoreline > div.active { border-color: #368163; background: #eef8f1; }
+.sos-scoreline span { font-size: 13px; font-weight: 800; }
+.sos-scoreline strong { font-size: 22px; line-height: 1.1; }
+.sos-scoreline small { font-size: 11px; color: #6d7c74; font-weight: 650; }
+.sos-scoreline em { color: #66786c; font-size: 12px; font-style: normal; }
+.sos-versus { color: #82928a; }
+.sos-status { display: flex; justify-content: space-between; gap: 15px; margin: 18px 0 10px; color: #2b624b; font-weight: 850; }
+.sos-status span { color: #78877d; font-weight: 650; white-space: nowrap; }
+.sos-board { display: grid; width: min(100%, 550px); aspect-ratio: 1; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0 auto; touch-action: manipulation; }
+.sos-board button { min-width: 0; min-height: 0; padding: 0; border: 2px solid transparent; border-radius: 8px; background: #fff; color: #2d654f; font-size: clamp(26px, 5vw, 54px); font-weight: 850; line-height: 1; }
+.sos-board button:disabled { opacity: 1; color: #2d654f; }
+.sos-board button.last { border-color: #e76f3e; background: #fff3e8; }
+.sos-board button.scored { color: #b34720; background: #ffefdc; }
+.sos-board button:not(:disabled):hover { background: #f0f9ef; }
+.sos-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.sos-mark-picker { display: flex; gap: 8px; }
+.sos-mark-picker button { width: 62px; height: 53px; border: 2px solid #d6e2da; border-radius: 10px; background: #fff; color: #315e49; font-size: 28px; font-weight: 850; }
+.sos-mark-picker button.selected { border-color: #2f7958; background: #eaf7ec; }
+.sos-last { min-height: 23px; color: #61756b; font-size: 13px; margin: 15px 0 0; }
+.sos-side { padding: 23px; color: #576d61; line-height: 1.6; }
+.sos-side p { font-size: 14px; }
+.sos-side ul { padding-left: 19px; font-size: 14px; }
+.sos-side li { margin: 9px 0; }
+.sos-result, .word-result { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; border-radius: 13px; padding: 19px; margin-top: 18px; background: #f0f8ee; }
+.sos-result strong, .word-result strong { font-size: 21px; }
+.sos-result span, .word-result span { color: #60766a; font-size: 14px; }
+.sos-result .primary-button, .word-result .primary-button { min-height: 47px; }
+.sos-focus .site-header, .sos-focus .sos-heading, .sos-focus .sos-side { display: none; }
+.sos-focus .sos-main { max-width: none; padding: 12px; }
+.sos-focus .sos-play-layout { display: block; }
+.sos-focus .sos-game-panel { max-width: min(100%, 1000px); margin: auto; }
+.sos-focus .sos-board { width: min(100%, 65dvh, 780px); }
+.word-setup, .word-game, .word-pass { max-width: 860px; padding: 28px; }
+.word-custom { display: grid; gap: 13px; margin-bottom: 22px; }
+.word-custom p { color: #62716f; font-size: 14px; line-height: 1.5; }
+.word-custom label { display: grid; gap: 7px; font-size: 14px; font-weight: 800; }
+.word-custom input { width: 100%; min-height: 48px; border: 1.5px solid #d7e1dc; border-radius: 10px; padding: 10px 13px; font: inherit; }
+.word-custom input:focus { outline: 3px solid #a4d2b4; }
+.word-error { color: #a53523; font-size: 14px; }
+.word-pass { text-align: center; padding: 50px 25px; }
+.word-pass-icon { display: grid; place-items: center; margin: auto; width: 74px; height: 74px; border-radius: 50%; background: #eaf4ee; color: #2e7352; font-size: 42px; font-weight: 850; }
+.word-pass p { color: #63736b; }
+.word-pass .primary-button { margin: 15px auto 0; }
+.word-topline { display: flex; justify-content: space-between; gap: 12px; color: #47735b; font-weight: 800; font-size: 14px; }
+.word-progress { display: flex; gap: 7px; margin: 13px 0 24px; }
+.word-progress span { height: 8px; flex: 1; border-radius: 9px; background: #dfebe1; }
+.word-progress span.used { background: #e47652; }
+.word-clue { display: flex; align-items: flex-start; gap: 13px; border-radius: 13px; padding: 18px; color: #995c25; background: #fff4e6; }
+.word-clue small { font-size: 11px; font-weight: 850; letter-spacing: 1.4px; }
+.word-clue p { margin: 5px 0 0; color: #4f544c; }
+.word-letters { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; margin: 30px 0; }
+.word-letters span:not(.space) { display: grid; place-items: center; width: clamp(29px, 4vw, 43px); height: 48px; border-bottom: 3px solid #719b80; font-size: 24px; font-weight: 850; }
+.word-letters span.revealed { color: #2a7450; }
+.word-letters span.missed { color: #ad4633; }
+.word-letters span.space { width: 20px; }
+.word-keyboard { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; }
+.word-keyboard button { min-width: 0; min-height: 49px; border: 1px solid #d8e4dc; border-radius: 9px; background: #f8faf8; color: #315746; font-size: 19px; font-weight: 800; touch-action: manipulation; }
+.word-keyboard button.correct { background: #e4f4e6; color: #257247; opacity: 1; }
+.word-keyboard button.wrong { background: #f5e5e1; color: #a55b47; opacity: 1; }
+.word-actions { display: flex; align-items: center; gap: 18px; margin-top: 22px; }
+@media (max-width: 850px) {
+  .workshop-cards { grid-template-columns: 1fr; max-width: 640px; margin: auto; }
+  .workshop-game-card { min-height: 0; }
+  .sos-play-layout { grid-template-columns: 1fr; }
+  .sos-side { max-width: 690px; }
+}
+@media (max-width: 600px) {
+  .home-main, .sos-main, .word-main { padding: 26px 14px 50px; }
+  .home-intro { margin: 16px 0 26px; }
+  .workshop-game-card { padding: 16px; }
+  .choice-art { height: 94px; margin-bottom: 16px; }
+  .sos-setup, .word-setup, .word-game, .sos-game-panel { padding: 15px; }
+  .sos-board { gap: 3px; padding: 4px; }
+  .sos-board button { font-size: clamp(25px, 9vw, 42px); }
+  .sos-scoreline small { display: block; }
+  .sos-scoreline > div { padding: 8px; }
+  .word-keyboard { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
+  .word-keyboard button { min-height: 46px; font-size: 17px; }
+  .word-letters { gap: 5px; }
+  .word-letters span:not(.space) { width: 30px; height: 42px; font-size: 20px; }
+  .word-actions { flex-wrap: wrap; }
+}
+@media (max-width: 360px) {
+  .sos-options button { flex: 1; padding: 9px; font-size: 12px; }
+  .sos-status { font-size: 13px; }
+  .word-keyboard { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
