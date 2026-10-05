@@ -22,30 +22,40 @@ const files = (await walk(root)).sort();
 const hash = createHash('sha256');
 for (const file of files) hash.update(await readFile(file));
 const cache = `sudoku-${hash.digest('hex').slice(0, 12)}`;
-const urls = [
-  '/',
-  ...files.map((file) => '/' + relative(root, file).replaceAll('\\', '/')),
-];
+const urls = files.map((file) => '/' + relative(root, file).replaceAll('\\', '/'));
 const worker = `/* Generated from the exact production assets. */
 const CACHE = ${JSON.stringify(cache)};
 const ASSETS = ${JSON.stringify(urls)};
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(ASSETS);
+    await self.skipWaiting();
+  })());
 });
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('sudoku-') && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+  event.waitUntil((async () => {
+    const previous = (await caches.keys()).filter(key => key.startsWith('sudoku-') && key !== CACHE);
+    // Keep the immediately previous version for pages already open during an update.
+    await Promise.all(previous.slice(0, -1).map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
   if (event.request.mode === 'navigate') {
-    // Use this version's shell and assets together. A waiting update activates
-    // after all old tabs close, so an in-progress game is never force-reloaded.
     const page = url.pathname === '/' ? '/index.html' : url.pathname.replace(/\\/$/, '') + '.html';
-    event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(page)) || fetch(event.request)));
+    event.respondWith(fetch(event.request).catch(async () => {
+      const cache = await caches.open(CACHE);
+      return (await cache.match(page)) || Response.error();
+    }));
   } else if (ASSETS.includes(url.pathname)) {
     event.respondWith(caches.open(CACHE).then(async cache => (await cache.match(url.pathname)) || fetch(event.request)));
+  } else if (url.pathname.startsWith('/_next/static/')) {
+    // An already-open page may still request a chunk from the previous release.
+    event.respondWith(caches.match(event.request, { ignoreSearch: true }).then(cached => cached || fetch(event.request)));
   }
 });
 `;

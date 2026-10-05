@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Grid2X2, Lightbulb, RotateCcw } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import {
   LETTERS, WORDS, cleanWord, pickWord, validCustomWord,
   type Category, type WordEntry,
@@ -109,8 +110,15 @@ export default function WordHuntPage() {
           <div className="word-letters" aria-label="Bulunacak kelime">{Array.from(round.entry.word).map((letter, index) => letter === ' ' ? <span key={index} className="space" /> : <span key={index} className={round.guesses.includes(letter) ? 'revealed' : round.outcome === 'lost' ? 'missed' : ''}>{round.guesses.includes(letter) || round.outcome === 'lost' ? letter : ''}</span>)}</div>
           <div className="word-keyboard">{LETTERS.map((letter) => <button key={letter} disabled={round.guesses.includes(letter) || !!round.outcome} className={round.guesses.includes(letter) ? round.entry.word.includes(letter) ? 'correct' : 'wrong' : ''} onClick={() => guess(letter)} aria-label={`${letter} harfi`}>{letter}</button>)}</div>
           <div className="word-actions"><button className="quiet-button" onClick={hint} disabled={round.hintUsed || !!round.outcome || round.mistakes >= limit - 1}><Lightbulb size={18} /> Harf ipucu (1 hak)</button><button className="text-button" onClick={() => setRound(null)}>Ayarlar</button></div>
-          {round.outcome && <section className="word-result" aria-live="polite"><strong>{round.outcome === 'won' ? 'Harika, kelimeyi buldun!' : 'Bu kez olmadı. Yeni kelimede dene!'}</strong><span>Kelime: {round.entry.word}</span><button className="primary-button" onClick={next}><RotateCcw size={18} /> {mode === 'solo' ? 'Yeni kelime' : 'Rolleri değiştir'}</button></section>}
         </section>}
+        <Dialog open={!!round?.outcome} onOpenChange={() => undefined}>
+          <DialogContent className="workshop-dialog game-result-dialog" showCloseButton={false}>
+            <DialogTitle>{round?.outcome === 'won' ? 'Harika, kelimeyi buldun!' : 'Bu kez olmadı. Yeni kelimede dene!'}</DialogTitle>
+            <DialogDescription>Kelime: <strong>{round?.entry.word}</strong></DialogDescription>
+            <button className="primary-button" onClick={next}><RotateCcw size={18} /> {mode === 'solo' ? 'Yeni kelime' : 'Rolleri değiştir'}</button>
+            <Link href="/" className="text-button">Diğer oyunlara geç</Link>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );

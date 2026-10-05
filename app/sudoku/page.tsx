@@ -127,6 +127,7 @@ export default function Home() {
   const [showErrors, setShowErrors] = useState(true),
     [showTimer, setShowTimer] = useState(true),
     [focus, setFocus] = useState(false),
+    [focusPlayer, setFocusPlayer] = useState<0 | 1>(0),
     [settingsOpen, setSettingsOpen] = useState(false);
   const [help, setHelp] = useState(false),
     [learnAnswer, setLearnAnswer] = useState<number | null>(null),
@@ -211,14 +212,6 @@ export default function Home() {
     };
     window.addEventListener('beforeinstallprompt', install);
     window.addEventListener('appinstalled', installed);
-    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator)
-      navigator.serviceWorker
-        .register('/sw.js')
-        .catch(() =>
-          setStatus(
-            'Çevrimdışı hazırlık tamamlanamadı; internet bağlantısıyla oynayabilirsin.',
-          ),
-        );
     return () => {
       active = false;
       window.removeEventListener('beforeinstallprompt', install);
@@ -510,6 +503,9 @@ export default function Home() {
           </span>
         </Link>
         <div className="header-actions">
+          <Link className="quiet-button games-link" href="/" aria-label="Diğer oyunlara geç">
+            <Grid2X2 size={17} /><span>Oyunlar</span>
+          </Link>
           <button
             className="quiet-button install-button"
             onClick={install}
@@ -736,6 +732,7 @@ export default function Home() {
                 </button>
               </div>
               <div className="game-actions">
+                {focus && <Link className="focus-games-link" href="/"><Grid2X2 size={16} /> Oyunlar</Link>}
                 <button
                   className="icon-button"
                   onClick={openShare}
@@ -786,7 +783,11 @@ export default function Home() {
                 </p>
               </div>
             )}
-            <div className={mode === 'versus' ? 'race-boards' : 'single-board'}>
+            {mode === 'versus' && focus && <fieldset className="focus-player-switch"><legend className="sr-only">Gösterilen oyuncu</legend>
+              <button className={focusPlayer === 0 ? 'selected' : ''} aria-pressed={focusPlayer === 0} onClick={() => setFocusPlayer(0)}>Turuncu takım</button>
+              <button className={focusPlayer === 1 ? 'selected' : ''} aria-pressed={focusPlayer === 1} onClick={() => setFocusPlayer(1)}>Yeşil takım</button>
+            </fieldset>}
+            <div className={mode === 'versus' ? 'race-boards' : 'single-board'} data-focus-player={focusPlayer}>
               {game.players.map((player, i) => (
                 <GameBoard
                   key={`${game.id}-${round}-${i}`}
@@ -1107,7 +1108,29 @@ export default function Home() {
             <strong>{resultScore.total.toLocaleString('tr-TR')}</strong>
             <small>Boyut, zorluk, süre ve oyun desteğine göre</small>
           </div>
-          <div className="score-breakdown">
+          <div className="result-metrics">
+            <div><strong>{formatTime(game.elapsed)}</strong><span>Oyun süresi</span></div>
+            <div><strong>{resultPlayer.hints}</strong><span>Açılan sayı</span></div>
+            <div><strong>{resultPlayer.mistakes}</strong><span>Yanlış hamle</span></div>
+            <div><strong>{game.puzzle.size}×{game.puzzle.size}</strong><span>{LEVELS[game.puzzle.level]}</span></div>
+          </div>
+          <button
+            className="primary-button"
+            onClick={() =>
+              start({ mode: mode === 'daily' ? 'solo' : mode, size, level })
+            }
+          >
+            {mode === 'versus' ? 'Yeni yarış' : 'Bir bulmaca daha'}
+            <ArrowRight size={18} />
+          </button>
+          {mode !== 'versus' && (
+            <button className="text-button" onClick={() => setCelebrate(false)}>
+              Tamamladığım tahtayı gör
+            </button>
+          )}
+          <details className="score-details">
+            <summary>Puanın ayrıntısı</summary>
+            <div className="score-breakdown">
             <span>
               Boyut + zorluk{' '}
               <strong>+{resultScore.base.toLocaleString('tr-TR')}</strong>
@@ -1129,45 +1152,9 @@ export default function Home() {
                 ).toLocaleString('tr-TR')}
               </strong>
             </span>
-          </div>
-          <div className="result-metrics">
-            <div>
-              <strong>{formatTime(game.elapsed)}</strong>
-              <span>Oyun süresi</span>
             </div>
-            <div>
-              <strong>{resultPlayer.hints}</strong>
-              <span>Açılan sayı</span>
-            </div>
-            <div>
-              <strong>{resultPlayer.mistakes}</strong>
-              <span>Yanlış hamle</span>
-            </div>
-            <div>
-              <strong>
-                {game.puzzle.size}×{game.puzzle.size}
-              </strong>
-              <span>{LEVELS[game.puzzle.level]}</span>
-            </div>
-          </div>
-          <p className="dialog-small">
-            Her farklı bulmacada 1–3 yıldız kazanırsın. Aynı bulmacayı tekrar
-            çözmek ek yıldız vermez.
-          </p>
-          <button
-            className="primary-button"
-            onClick={() =>
-              start({ mode: mode === 'daily' ? 'solo' : mode, size, level })
-            }
-          >
-            {mode === 'versus' ? 'Yeni yarış' : 'Bir bulmaca daha'}
-            <ArrowRight size={18} />
-          </button>
-          {mode !== 'versus' && (
-            <button className="text-button" onClick={() => setCelebrate(false)}>
-              Tamamladığım tahtayı gör
-            </button>
-          )}
+            <p className="dialog-small">Her farklı bulmacada 1–3 yıldız kazanırsın. Aynı bulmacayı tekrar çözmek ek yıldız vermez.</p>
+          </details>
         </DialogContent>
       </Dialog>
 

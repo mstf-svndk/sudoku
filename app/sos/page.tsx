@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Bot, Grid2X2, Maximize, Minimize, RotateCcw, UsersRound } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import {
   SIDE, chooseAiMove, newMatch, nextRound, play,
   type Difficulty, type Mark, type Match, type MatchMode, type Target,
@@ -105,10 +106,12 @@ export default function SosPage() {
                 <span className="sos-versus">—</span>
                 <div className={round?.turn === 1 && !round.finished ? 'active' : ''}><span>{playerName(1)}</span><strong>{match.wins[1]}<small> / {match.target} galibiyet</small></strong><em>{round?.scores[1]} puan</em></div>
               </div>
-              <output className="sos-status" aria-live="polite">
+              <output className={`sos-status ${round?.turn === 0 ? 'turn-one' : 'turn-two'}`} aria-live="polite">
+                <strong>
                 {round?.finished
                   ? round.winner === null ? 'Berabere! Bu raund için galibiyet yazılmadı.' : `${playerName(round.winner)} raundu kazandı!`
-                  : aiTurn ? 'Yapay zekâ düşünüyor…' : `${playerName(round!.turn)} oynuyor`}
+                  : aiTurn ? 'Yapay zekâ düşünüyor…' : `SIRA: ${playerName(round!.turn)}`}
+                </strong>
                 <span>{match.roundNumber}. raund</span>
               </output>
               <div className="sos-board" style={{ gridTemplateColumns: `repeat(${SIDE}, 1fr)` }}>
@@ -125,14 +128,9 @@ export default function SosPage() {
                   {(['S', 'O'] as Mark[]).map((value) => <button key={value} className={mark === value ? 'selected' : ''} aria-pressed={mark === value} onClick={() => setMark(value)} disabled={round?.finished}>{value}</button>)}
                 </div>
                 <button className="quiet-button" onClick={toggleFocus} aria-label={focus ? 'Odak görünümünden çık' : 'Tahtayı büyüt'}>{focus ? <Minimize size={19} /> : <Maximize size={19} />}<span>{focus ? 'Küçült' : 'Büyüt'}</span></button>
+                {focus && <Link href="/" className="quiet-button sos-games-link"><Grid2X2 size={17} /><span>Oyunlar</span></Link>}
               </div>
               <p className="sos-last">{round?.lastMove ? `Son hamle: ${playerName(round.lastMove.player)} ${round.lastMove.mark} koydu${round.lastMove.points ? `, ${round.lastMove.points} SOS yaptı` : ''}.` : 'Başlamak için bir harf seç ve boş bir kareye dokun.'}</p>
-              {round?.finished && <section className="sos-result" aria-live="polite">
-                <strong>{match.champion !== null ? `${playerName(match.champion)} seriyi kazandı!` : round.winner === null ? 'Raund berabere' : `${playerName(round.winner)} kazandı`}</strong>
-                <span>Raund puanı {round.scores[0]} – {round.scores[1]} · Seri {match.wins[0]} – {match.wins[1]}</span>
-                {match.champion === null && <button className="primary-button" onClick={() => setMatch((current) => current ? nextRound(current) : current)}>Sonraki raund <ArrowRight size={18} /></button>}
-                <button className="quiet-button" onClick={() => setMatch(newMatch(match.mode, match.difficulty, match.target))}><RotateCcw size={17} /> Yeniden maç</button>
-              </section>}
             </section>
             <aside className="sos-side">
               <h2>Oyun bilgisi</h2>
@@ -142,6 +140,15 @@ export default function SosPage() {
             </aside>
           </div>
         )}
+        <Dialog open={!!round?.finished} onOpenChange={() => undefined}>
+          <DialogContent className="workshop-dialog game-result-dialog" showCloseButton={false}>
+            <DialogTitle>{match?.champion !== null && match?.champion !== undefined ? `${playerName(match.champion)} seriyi kazandı!` : round?.winner === null ? 'Raund berabere' : `${playerName(round?.winner ?? 0)} kazandı`}</DialogTitle>
+            <DialogDescription>Raund puanı {round?.scores[0]} – {round?.scores[1]} · Seri {match?.wins[0]} – {match?.wins[1]}</DialogDescription>
+            {match?.champion === null && <button className="primary-button" onClick={() => setMatch((current) => current ? nextRound(current) : current)}>Sonraki raund <ArrowRight size={18} /></button>}
+            <button className="quiet-button" onClick={() => setMatch(newMatch(match!.mode, match!.difficulty, match!.target))}><RotateCcw size={17} /> Yeniden maç</button>
+            <Link href="/" className="text-button">Diğer oyunlara geç</Link>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );

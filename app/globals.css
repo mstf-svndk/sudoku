@@ -2218,3 +2218,116 @@ footer {
   .sos-status { font-size: 13px; }
   .word-keyboard { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
+.pwa-update-notice {
+  position: fixed;
+  inset: auto 16px 16px auto;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #244e3c;
+  color: #fff;
+  box-shadow: 0 8px 25px #173a2e38;
+  font-size: 14px;
+}
+.pwa-update-notice button {
+  flex: none;
+  min-height: 42px;
+  border: 1px solid #b8dec4;
+  border-radius: 8px;
+  padding: 8px 11px;
+  background: #fff;
+  color: #24563c;
+  font-weight: 800;
+}
+@media (max-width: 480px) {
+  .pwa-update-notice { inset: auto 12px 12px; justify-content: space-between; }
+}
+
+/* Keep the active board, its controls and the way back to the game shelf in view. */
+.games-link { white-space: nowrap; }
+.focus-games-link { display: inline-flex; align-items: center; gap: 5px; color: #346249; font-size: 12px; font-weight: 800; text-decoration: none; }
+.focus-player-switch { display: none; min-width: 0; padding: 0; border: 0; }
+.focus-mode { height: 100dvh; overflow: hidden; }
+body:has(.focus-mode, .sos-focus) .pwa-update-notice { display: none; }
+.focus-mode .page-wrap { height: 100dvh; max-width: 940px; padding: 6px 10px; overflow-y: auto; }
+.focus-mode .game-card { padding: 8px 12px; }
+.focus-mode .mode-note { display: none; }
+.focus-mode .race-workspace .settings-panel,
+.focus-mode .race-workspace .settings-panel.mobile-open { display: none; }
+.focus-mode .board-wrap { max-width: min(600px, calc(100dvh - 250px), calc(100vw - 44px)); }
+.focus-mode:has(.sudoku-board.size-12) .board-wrap { max-width: min(600px, calc(100dvh - 290px), calc(100vw - 44px)); }
+.focus-mode:has(.race-workspace) .board-wrap { max-width: min(600px, calc(100dvh - 285px), calc(100vw - 44px)); }
+.focus-mode:has(.race-workspace):has(.sudoku-board.size-12) .board-wrap { max-width: min(600px, calc(100dvh - 320px), calc(100vw - 44px)); }
+.focus-mode .board-message { min-height: 0; margin: 4px 0 0; line-height: 1.25; }
+.focus-mode .board-tools { margin-top: 4px; padding-top: 3px; }
+.focus-mode .board-tools > button { min-height: 35px; }
+.focus-mode .number-pad { margin-top: 5px; }
+.focus-mode .number-pad button { min-height: 38px; }
+.focus-mode .board-progress { margin-top: 4px; }
+.focus-mode .game-statusbar { padding-bottom: 2px; }
+
+.celebration[data-slot='dialog-content'] { gap: 8px; padding: 18px; }
+.celebration .celebration-stars { margin: 0; gap: 10px; }
+.celebration .celebration-stars svg { width: 21px; height: 21px; }
+.celebration .celebration-stars svg:nth-child(2) { width: 39px; height: 39px; }
+.celebration .score-hero { padding: 8px; }
+.celebration .result-metrics { width: 100%; padding: 8px 3px; margin: 0; }
+.celebration .result-metrics strong { font-size: 17px; }
+.celebration .result-metrics span { font-size: 10px; }
+.score-details { width: 100%; text-align: left; font-size: 12px; color: #607465; }
+.score-details summary { cursor: pointer; font-weight: 800; padding: 5px; }
+.score-details .score-breakdown { margin-top: 7px; }
+.score-details .dialog-small { margin: 9px 0 0; }
+.game-result-dialog[data-slot='dialog-content'] { gap: 14px; text-align: center; max-height: calc(100dvh - 24px); overflow-y: auto; }
+.game-result-dialog .primary-button, .game-result-dialog .quiet-button { justify-content: center; width: 100%; }
+.game-result-dialog .text-button { display: inline-block; }
+
+.sos-focus { height: 100dvh; overflow: hidden; }
+.sos-focus .sos-main { height: 100dvh; padding: 6px; overflow-y: auto; }
+.sos-focus .sos-game-panel { padding: 9px; }
+.sos-focus .sos-scoreline > div { padding: 5px 8px; gap: 0; }
+.sos-focus .sos-scoreline strong { font-size: 18px; }
+.sos-focus .sos-scoreline em { font-size: 11px; }
+.sos-focus .sos-status { margin: 7px 0 5px; font-size: 13px; }
+.sos-focus .sos-board { width: min(100%, calc(100dvh - 235px), 780px); }
+.sos-focus .sos-controls { margin-top: 7px; }
+.sos-focus .sos-mark-picker button { height: 42px; width: 48px; font-size: 24px; }
+.sos-focus .sos-last { margin: 5px 0 0; min-height: 0; font-size: 11px; }
+.sos-focus .sos-games-link { margin-left: auto; }
+.sos-scoreline > div:first-child.active { border-color: #df8653; background: #fff2e7; }
+.sos-scoreline > div:last-child.active { border-color: #368163; background: #eef8f1; }
+.sos-status { align-items: center; border-radius: 9px; padding: 8px 10px; }
+.sos-status strong { font-size: 15px; }
+.sos-status.turn-one { background: #fff1e5; color: #a74d21; }
+.sos-status.turn-two { background: #e9f5eb; color: #25694a; }
+
+@media (max-width: 850px) {
+  .focus-mode:has(.race-workspace) .race-boards { grid-template-columns: 1fr; gap: 0; }
+  .focus-mode .focus-player-switch { display: flex; gap: 6px; margin: 2px 0 5px; }
+  .focus-player-switch button { flex: 1; min-height: 34px; border: 1px solid #d9e5da; border-radius: 8px; background: #fff; color: #446352; font-weight: 750; }
+  .focus-player-switch button.selected { background: #e6f2e8; border-color: #5a906f; }
+  .focus-mode .race-boards[data-focus-player='0'] .player-1,
+  .focus-mode .race-boards[data-focus-player='1'] .player-0 { display: none; }
+  .focus-mode .race-boards .player-1 { border-top: 0; padding-top: 0; }
+  .focus-mode .page-wrap { padding: 4px 7px; }
+}
+@media (max-width: 720px) {
+  .header-actions .games-link span { display: inline; font-size: 12px; }
+  .header-actions .games-link { padding: 0 8px; }
+  .focus-mode .sudoku-board.size-9 .cell { font-size: clamp(15px, 5vw, 25px); }
+  .focus-mode .sudoku-board.size-12 .cell { font-size: clamp(11px, 3.8vw, 20px); }
+  .sos-focus .sos-controls .quiet-button { min-height: 42px; padding: 5px 7px; font-size: 11px; }
+}
+@media (max-height: 650px) {
+  .focus-mode .board-wrap { max-width: min(600px, calc(100dvh - 225px), calc(100vw - 44px)); }
+  .focus-mode:has(.sudoku-board.size-12) .board-wrap { max-width: min(600px, calc(100dvh - 265px), calc(100vw - 44px)); }
+  .focus-mode:has(.race-workspace) .board-wrap { max-width: min(600px, calc(100dvh - 260px), calc(100vw - 44px)); }
+  .focus-mode:has(.race-workspace):has(.sudoku-board.size-12) .board-wrap { max-width: min(600px, calc(100dvh - 295px), calc(100vw - 44px)); }
+  .focus-mode .board-message { display: none; }
+  .sos-focus .sos-board { width: min(100%, calc(100dvh - 215px), 780px); }
+  .sos-focus .sos-last { display: none; }
+}
