@@ -65,7 +65,6 @@ export default function SosPage() {
 
   const playerName = (player: 0 | 1) =>
     player === 0 ? '1. oyuncu' : match?.mode === 'ai' ? 'Yapay zekâ' : '2. oyuncu';
-  const scored = new Set(round?.lastMove?.lines.flat() || []);
 
   return (
     <div className={`app-shell sos-page ${focus ? 'sos-focus' : ''}`}>
@@ -102,9 +101,9 @@ export default function SosPage() {
           <div className="sos-play-layout">
             <section className="sos-game-panel" aria-label="SOS oyun tahtası">
               <div className="sos-scoreline">
-                <div className={round?.turn === 0 && !round.finished ? 'active' : ''}><span>1. oyuncu</span><strong>{match.wins[0]}<small> / {match.target} galibiyet</small></strong><em>{round?.scores[0]} puan</em></div>
+                <div className={`player-one ${round?.turn === 0 && !round.finished ? 'active' : ''}`}><span><i className="sos-dot" />1. oyuncu</span><strong>{match.wins[0]}<small> / {match.target} galibiyet</small></strong><em>{round?.scores[0]} puan</em></div>
                 <span className="sos-versus">—</span>
-                <div className={round?.turn === 1 && !round.finished ? 'active' : ''}><span>{playerName(1)}</span><strong>{match.wins[1]}<small> / {match.target} galibiyet</small></strong><em>{round?.scores[1]} puan</em></div>
+                <div className={`player-two ${round?.turn === 1 && !round.finished ? 'active' : ''}`}><span><i className="sos-dot" />{playerName(1)}</span><strong>{match.wins[1]}<small> / {match.target} galibiyet</small></strong><em>{round?.scores[1]} puan</em></div>
               </div>
               <output className={`sos-status ${round?.turn === 0 ? 'turn-one' : 'turn-two'}`} aria-live="polite">
                 <strong>
@@ -115,13 +114,16 @@ export default function SosPage() {
                 <span>{match.roundNumber}. raund</span>
               </output>
               <div className="sos-board" style={{ gridTemplateColumns: `repeat(${SIDE}, 1fr)` }}>
-                {round?.board.map((cell, index) => (
+                {round?.board.map((cell, index) => {
+                  const sosOwner = round.sosOwners[index];
+                  return (
                   <button key={index} type="button"
-                    className={`${index === round.lastMove?.index ? 'last' : ''} ${scored.has(index) ? 'scored' : ''}`}
-                    aria-label={`${Math.floor(index / SIDE) + 1}. satır ${index % SIDE + 1}. sütun${cell ? `, ${cell}` : ', boş'}${index === round.lastMove?.index ? ', son hamle' : ''}`}
+                    className={`${index === round.lastMove?.index ? 'last' : ''} ${sosOwner !== undefined ? `sos-scored sos-owner-${sosOwner}` : ''} ${cell && sosOwner === undefined ? `sos-owner-${round.owners[index]}` : ''}`}
+                    aria-label={`${Math.floor(index / SIDE) + 1}. satır ${index % SIDE + 1}. sütun${cell ? `, ${cell}` : ', boş'}${sosOwner !== undefined ? `, ${playerName(sosOwner)} SOS yaptı` : ''}${index === round.lastMove?.index ? ', son hamle' : ''}`}
                     disabled={!!cell || round.finished || aiTurn}
                     onClick={() => put(index)}>{cell}</button>
-                ))}
+                  );
+                })}
               </div>
               <div className="sos-controls">
                 <div className="sos-mark-picker" aria-label="Yerleştirilecek harf">

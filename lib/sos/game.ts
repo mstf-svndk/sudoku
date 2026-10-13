@@ -8,6 +8,8 @@ export type Move = { index: number; mark: Mark };
 export type LastMove = Move & { player: Player; points: number; lines: number[][] };
 export type Round = {
   board: (Mark | null)[];
+  owners: (Player | null)[];
+  sosOwners: Record<number, Player>;
   scores: [number, number];
   turn: Player;
   lastMove: LastMove | null;
@@ -27,6 +29,8 @@ export type Match = {
 export function newRound(first: Player = 0): Round {
   return {
     board: Array(SIDE * SIDE).fill(null),
+    owners: Array(SIDE * SIDE).fill(null),
+    sosOwners: {},
     scores: [0, 0],
     turn: first,
     lastMove: null,
@@ -94,8 +98,17 @@ export function place(round: Round, move: Move): Round {
     (move.mark !== 'S' && move.mark !== 'O')
   ) return round;
   const board = [...round.board];
+  const owners = [...round.owners];
   board[move.index] = move.mark;
+  owners[move.index] = round.turn;
   const lines = linesAt(board, move.index);
+  const sosOwners = { ...round.sosOwners };
+  for (const line of lines) {
+    for (const cell of line) {
+      // SOS yapan oyuncu hücrenin rengini kalıcı olarak üstlenir.
+      sosOwners[cell] = round.turn;
+    }
+  }
   const scores: [number, number] = [...round.scores];
   scores[round.turn] += lines.length;
   const finished = board.every(Boolean);
@@ -104,6 +117,8 @@ export function place(round: Round, move: Move): Round {
     : null;
   return {
     board,
+    owners,
+    sosOwners,
     scores,
     turn: lines.length ? round.turn : round.turn === 0 ? 1 : 0,
     lastMove: { ...move, player: round.turn, points: lines.length, lines },

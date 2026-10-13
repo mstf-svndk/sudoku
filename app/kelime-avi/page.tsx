@@ -64,17 +64,6 @@ export default function WordHuntPage() {
       return { ...current, guesses, mistakes, outcome: won ? 'won' : mistakes >= limit ? 'lost' : null };
     });
   }
-  function hint() {
-    setRound((current) => {
-      if (!current || current.outcome || current.hintUsed || current.mistakes >= limit - 1) return current;
-      const letter = Array.from(current.entry.word).find((char) => char !== ' ' && !current.guesses.includes(char));
-      if (!letter) return current;
-      const guesses = [...current.guesses, letter];
-      const mistakes = current.mistakes + 1;
-      const won = Array.from(current.entry.word).every((char) => char === ' ' || guesses.includes(char));
-      return { ...current, guesses, mistakes, hintUsed: true, outcome: won ? 'won' : null };
-    });
-  }
   function next() {
     if (mode === 'solo') begin(pickWord(category, previous));
     else {
@@ -106,10 +95,10 @@ export default function WordHuntPage() {
         </section> : passing ? <section className="word-pass"><span className="word-pass-icon">?</span><h2>Cihazı arkadaşına ver</h2><p>Kelime gizlendi. Hazır olduğunda tahmin ekranını aç.</p><button className="primary-button" onClick={() => setPassing(false)}>Tahmine başla <ArrowRight size={18} /></button></section> : <section className="word-game">
           <div className="word-topline"><span>{mode === 'solo' ? round.entry.category : `${setter === 0 ? 2 : 1}. oyuncu tahmin ediyor`}</span><span>{limit - round.mistakes} hak kaldı</span></div>
           <div className="word-progress" aria-label={`${round.mistakes} yanlış tahmin`}>{Array.from({ length: limit }, (_, index) => <span key={index} className={index < round.mistakes ? 'used' : ''} />)}</div>
-          <div className="word-clue"><Lightbulb size={23} /><div><small>İPUCU</small><p>{round.entry.clue}</p></div></div>
+          <div className="word-clue"><Lightbulb size={23} /><div><small>{mode === 'solo' ? 'KATEGORİ' : 'İPUCU'}</small><p>{mode === 'solo' ? round.entry.category : round.entry.clue}</p></div></div>
           <div className="word-letters" aria-label="Bulunacak kelime">{Array.from(round.entry.word).map((letter, index) => letter === ' ' ? <span key={index} className="space" /> : <span key={index} className={round.guesses.includes(letter) ? 'revealed' : round.outcome === 'lost' ? 'missed' : ''}>{round.guesses.includes(letter) || round.outcome === 'lost' ? letter : ''}</span>)}</div>
           <div className="word-keyboard">{LETTERS.map((letter) => <button key={letter} disabled={round.guesses.includes(letter) || !!round.outcome} className={round.guesses.includes(letter) ? round.entry.word.includes(letter) ? 'correct' : 'wrong' : ''} onClick={() => guess(letter)} aria-label={`${letter} harfi`}>{letter}</button>)}</div>
-          <div className="word-actions"><button className="quiet-button" onClick={hint} disabled={round.hintUsed || !!round.outcome || round.mistakes >= limit - 1}><Lightbulb size={18} /> Harf ipucu (1 hak)</button><button className="text-button" onClick={() => setRound(null)}>Ayarlar</button></div>
+          <div className="word-actions"><button className="text-button" onClick={() => setRound(null)}>Ayarlar</button></div>
         </section>}
         <Dialog open={!!round?.outcome} onOpenChange={() => undefined}>
           <DialogContent className="workshop-dialog game-result-dialog" showCloseButton={false}>

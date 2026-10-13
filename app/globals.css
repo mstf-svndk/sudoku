@@ -2140,11 +2140,27 @@ footer {
 .sos-status { display: flex; justify-content: space-between; gap: 15px; margin: 18px 0 10px; color: #2b624b; font-weight: 850; }
 .sos-status span { color: #78877d; font-weight: 650; white-space: nowrap; }
 .sos-board { display: grid; width: min(100%, 550px); aspect-ratio: 1; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0 auto; touch-action: manipulation; }
-.sos-board button { min-width: 0; min-height: 0; padding: 0; border: 2px solid transparent; border-radius: 8px; background: #fff; color: #2d654f; font-size: clamp(26px, 5vw, 54px); font-weight: 850; line-height: 1; }
+.sos-board button { min-width: 0; min-height: 0; padding: 0; border: 2px solid transparent; border-radius: 8px; background: #fff; color: #2d654f; font-size: clamp(26px, 5vw, 54px); font-weight: 850; line-height: 1; position: relative; }
 .sos-board button:disabled { opacity: 1; color: #2d654f; }
 .sos-board button.last { border-color: #e76f3e; background: #fff3e8; }
-.sos-board button.scored { color: #b34720; background: #ffefdc; }
+/* Oyuncu renkleri: 1. oyuncu lacivert, 2. oyuncu / yapay zekâ kırmızımsı. */
+.sos-board button.sos-owner-0 { color: #1d4ed8; }
+.sos-board button.sos-owner-1 { color: #c2410c; }
+.sos-board button.sos-owner-0.sos-owner-plain { color: #1d4ed8; }
+.sos-board button:not(.sos-scored).sos-owner-0 { color: #1d4ed8; opacity: .82; }
+.sos-board button:not(.sos-scored).sos-owner-1 { color: #c2410c; opacity: .82; }
+/* SOS yapılan kareler: sahibinin rengi + üstü çizili + renk çizgili zemin. */
+.sos-board button.sos-scored { text-decoration: line-through; text-decoration-thickness: 3px; font-weight: 900; }
+.sos-board button.sos-scored.sos-owner-0 { text-decoration-color: #1d4ed8; background: repeating-linear-gradient(-45deg, #e3edff 0 6px, #f6faff 6px 12px); }
+.sos-board button.sos-scored.sos-owner-1 { text-decoration-color: #c2410c; background: repeating-linear-gradient(-45deg, #ffe9d9 0 6px, #fff7f0 6px 12px); }
 .sos-board button:not(:disabled):hover { background: #f0f9ef; }
+/* Skor satırında oyuncu renk noktaları */
+.sos-scoreline .player-one span, .sos-scoreline .player-two span { display: inline-flex; align-items: center; gap: 7px; }
+.sos-scoreline .sos-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.sos-scoreline .player-one .sos-dot { background: #1d4ed8; }
+.sos-scoreline .player-two .sos-dot { background: #c2410c; }
+.sos-scoreline .player-one { border-left: 4px solid #1d4ed8; }
+.sos-scoreline .player-two { border-left: 4px solid #c2410c; }
 .sos-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
 .sos-mark-picker { display: flex; gap: 8px; }
 .sos-mark-picker button { width: 62px; height: 53px; border: 2px solid #d6e2da; border-radius: 10px; background: #fff; color: #315e49; font-size: 28px; font-weight: 850; }
