@@ -6,10 +6,11 @@ export type MatchMode = 'local' | 'ai';
 export type Target = 3 | 5 | 10;
 export type Move = { index: number; mark: Mark };
 export type LastMove = Move & { player: Player; points: number; lines: number[][] };
+export type SosLine = { cells: number[]; player: Player };
 export type Round = {
   board: (Mark | null)[];
   owners: (Player | null)[];
-  sosOwners: Record<number, Player>;
+  sosLines: SosLine[];
   scores: [number, number];
   turn: Player;
   lastMove: LastMove | null;
@@ -30,7 +31,7 @@ export function newRound(first: Player = 0): Round {
   return {
     board: Array(SIDE * SIDE).fill(null),
     owners: Array(SIDE * SIDE).fill(null),
-    sosOwners: {},
+    sosLines: [],
     scores: [0, 0],
     turn: first,
     lastMove: null,
@@ -102,13 +103,8 @@ export function place(round: Round, move: Move): Round {
   board[move.index] = move.mark;
   owners[move.index] = round.turn;
   const lines = linesAt(board, move.index);
-  const sosOwners = { ...round.sosOwners };
-  for (const line of lines) {
-    for (const cell of line) {
-      // SOS yapan oyuncu hücrenin rengini kalıcı olarak üstlenir.
-      sosOwners[cell] = round.turn;
-    }
-  }
+  // SOS line'ları tek tek saklanır: tahtanın üstine tek çizgiyle çizilir.
+  const sosLines = [...round.sosLines, ...lines.map((cells) => ({ cells, player: round.turn }))];
   const scores: [number, number] = [...round.scores];
   scores[round.turn] += lines.length;
   const finished = board.every(Boolean);
@@ -118,7 +114,7 @@ export function place(round: Round, move: Move): Round {
   return {
     board,
     owners,
-    sosOwners,
+    sosLines,
     scores,
     turn: lines.length ? round.turn : round.turn === 0 ? 1 : 0,
     lastMove: { ...move, player: round.turn, points: lines.length, lines },

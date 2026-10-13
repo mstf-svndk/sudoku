@@ -2139,21 +2139,20 @@ footer {
 .sos-versus { color: #82928a; }
 .sos-status { display: flex; justify-content: space-between; gap: 15px; margin: 18px 0 10px; color: #2b624b; font-weight: 850; }
 .sos-status span { color: #78877d; font-weight: 650; white-space: nowrap; }
-.sos-board { display: grid; width: min(100%, 550px); aspect-ratio: 1; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0 auto; touch-action: manipulation; }
+.sos-board { display: grid; width: 100%; aspect-ratio: 1; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0; touch-action: manipulation; }
 .sos-board button { min-width: 0; min-height: 0; padding: 0; border: 2px solid transparent; border-radius: 8px; background: #fff; color: #2d654f; font-size: clamp(26px, 5vw, 54px); font-weight: 850; line-height: 1; position: relative; }
 .sos-board button:disabled { opacity: 1; color: #2d654f; }
 .sos-board button.last { border-color: #e76f3e; background: #fff3e8; }
 /* Oyuncu renkleri: 1. oyuncu lacivert, 2. oyuncu / yapay zekâ kırmızımsı. */
 .sos-board button.sos-owner-0 { color: #1d4ed8; }
 .sos-board button.sos-owner-1 { color: #c2410c; }
-.sos-board button.sos-owner-0.sos-owner-plain { color: #1d4ed8; }
-.sos-board button:not(.sos-scored).sos-owner-0 { color: #1d4ed8; opacity: .82; }
-.sos-board button:not(.sos-scored).sos-owner-1 { color: #c2410c; opacity: .82; }
-/* SOS yapılan kareler: sahibinin rengi + üstü çizili + renk çizgili zemin. */
-.sos-board button.sos-scored { text-decoration: line-through; text-decoration-thickness: 3px; font-weight: 900; }
-.sos-board button.sos-scored.sos-owner-0 { text-decoration-color: #1d4ed8; background: repeating-linear-gradient(-45deg, #e3edff 0 6px, #f6faff 6px 12px); }
-.sos-board button.sos-scored.sos-owner-1 { text-decoration-color: #c2410c; background: repeating-linear-gradient(-45deg, #ffe9d9 0 6px, #fff7f0 6px 12px); }
 .sos-board button:not(:disabled):hover { background: #f0f9ef; }
+/* SOS bağlama çizgileri: tahtanın üstünde, oyuncunun renginde tek çizgi. */
+.sos-board-wrap { position: relative; width: min(100%, 550px); margin: 0 auto; }
+.sos-scribe { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.sos-scribe line { stroke-width: 7; stroke-linecap: round; opacity: .8; }
+.sos-scribe line.owner-0 { stroke: #1d4ed8; }
+.sos-scribe line.owner-1 { stroke: #c2410c; }
 /* Skor satırında oyuncu renk noktaları */
 .sos-scoreline .player-one span, .sos-scoreline .player-two span { display: inline-flex; align-items: center; gap: 7px; }
 .sos-scoreline .sos-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
@@ -2178,7 +2177,7 @@ footer {
 .sos-focus .sos-main { max-width: none; padding: 12px; }
 .sos-focus .sos-play-layout { display: block; }
 .sos-focus .sos-game-panel { max-width: min(100%, 1000px); margin: auto; }
-.sos-focus .sos-board { width: min(100%, 65dvh, 780px); }
+.sos-focus .sos-board-wrap { width: min(100%, 65dvh, 780px); }
 .word-setup, .word-game, .word-pass { max-width: 860px; padding: 28px; }
 .word-custom { display: grid; gap: 13px; margin-bottom: 22px; }
 .word-custom p { color: #62716f; font-size: 14px; line-height: 1.5; }
@@ -2309,7 +2308,7 @@ body:has(.focus-mode, .sos-focus) .pwa-update-notice { display: none; }
 .sos-focus .sos-scoreline strong { font-size: 18px; }
 .sos-focus .sos-scoreline em { font-size: 11px; }
 .sos-focus .sos-status { margin: 7px 0 5px; font-size: 13px; }
-.sos-focus .sos-board { width: min(100%, calc(100dvh - 235px), 780px); }
+.sos-focus .sos-board-wrap { width: min(100%, calc(100dvh - 235px), 780px); }
 .sos-focus .sos-controls { margin-top: 7px; }
 .sos-focus .sos-mark-picker button { height: 42px; width: 48px; font-size: 24px; }
 .sos-focus .sos-last { margin: 5px 0 0; min-height: 0; font-size: 11px; }

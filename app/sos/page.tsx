@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Bot, Grid2X2, Maximize, Minimize, RotateCcw, UsersRound } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -20,8 +20,32 @@ export default function SosPage() {
   const [match, setMatch] = useState<Match | null>(null);
   const [mark, setMark] = useState<Mark>('S');
   const [focus, setFocus] = useState(false);
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const [boardSize, setBoardSize] = useState(0);
   const round = match?.round;
   const aiTurn = !!match && match.mode === 'ai' && round?.turn === 1 && !round.finished;
+
+  useEffect(() => {
+    const el = boardRef.current;
+    if (!el) return;
+    const update = () => setBoardSize(Math.round(el.getBoundingClientRect().width));
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [match]);
+
+  // SOS çizgisi iki uç karenin merkezinden geçer; ölçümler karelerin gerçek
+  // DOM konumlarından alınır (odak görünümü/taşıma dahil her ölçekte isabetli).
+  const cellCenter = (index: number) => {
+    const wrap = boardRef.current;
+    if (!wrap) return { x: 0, y: 0 };
+    const cell = wrap.querySelectorAll('button')[index];
+    if (!cell) return { x: 0, y: 0 };
+    const outer = wrap.getBoundingClientRect();
+    const rect = cell.getBoundingClientRect();
+    return { x: rect.left - outer.left + rect.width / 2, y: rect.top - outer.top + rect.height / 2 };
+  };
 
   useEffect(() => {
     const syncFullscreen = () => {
@@ -113,17 +137,25 @@ export default function SosPage() {
                 </strong>
                 <span>{match.roundNumber}. raund</span>
               </output>
-              <div className="sos-board" style={{ gridTemplateColumns: `repeat(${SIDE}, 1fr)` }}>
-                {round?.board.map((cell, index) => {
-                  const sosOwner = round.sosOwners[index];
-                  return (
-                  <button key={index} type="button"
-                    className={`${index === round.lastMove?.index ? 'last' : ''} ${sosOwner !== undefined ? `sos-scored sos-owner-${sosOwner}` : ''} ${cell && sosOwner === undefined ? `sos-owner-${round.owners[index]}` : ''}`}
-                    aria-label={`${Math.floor(index / SIDE) + 1}. satır ${index % SIDE + 1}. sütun${cell ? `, ${cell}` : ', boş'}${sosOwner !== undefined ? `, ${playerName(sosOwner)} SOS yaptı` : ''}${index === round.lastMove?.index ? ', son hamle' : ''}`}
-                    disabled={!!cell || round.finished || aiTurn}
-                    onClick={() => put(index)}>{cell}</button>
-                  );
-                })}
+              <div className="sos-board-wrap" ref={boardRef}>
+                <div className="sos-board" style={{ gridTemplateColumns: `repeat(${SIDE}, 1fr)` }}>
+                  {round?.board.map((cell, index) => (
+                    <button key={index} type="button"
+                      className={`${index === round.lastMove?.index ? 'last' : ''} ${cell ? `sos-owner-${round.owners[index]}` : ''}`}
+                      aria-label={`${Math.floor(index / SIDE) + 1}. satır ${index % SIDE + 1}. sütun${cell ? `, ${cell}` : ', boş'}${index === round.lastMove?.index ? ', son hamle' : ''}`}
+                      disabled={!!cell || round.finished || aiTurn}
+                      onClick={() => put(index)}>{cell}</button>
+                  ))}
+                </div>
+                {boardSize > 0 && (
+                  <svg className="sos-scribe" viewBox={`0 0 ${boardSize} ${boardSize}`} aria-hidden="true">
+                    {round?.sosLines.map((line, key) => {
+                      const a = cellCenter(line.cells[0]);
+                      const b = cellCenter(line.cells[2]);
+                      return <line key={key} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`owner-${line.player}`} />;
+                    })}
+                  </svg>
+                )}
               </div>
               <div className="sos-controls">
                 <div className="sos-mark-picker" aria-label="Yerleştirilecek harf">
