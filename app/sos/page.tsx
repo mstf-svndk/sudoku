@@ -35,17 +35,27 @@ export default function SosPage() {
     return () => observer.disconnect();
   }, [match]);
 
-  // SOS çizgisi iki uç karenin merkezinden geçer; ölçümler karelerin gerçek
-  // DOM konumlarından alınır (odak görünümü/taşıma dahil her ölçekte isabetli).
-  const cellCenter = (index: number) => {
+  // SOS çizgisi iki uç karenin merkezinden geçer; ölçümler render sırasında DEĞİL
+  // (ref yasağı), yerleşim bittikten sonra gerçek DOM konumlarından alınır —
+  // odak görünümü ve her tahta ölçeğinde isabetli kalır.
+  type Stroke = { x1: number; y1: number; x2: number; y2: number; player: 0 | 1 };
+  const [strokes, setStrokes] = useState<Stroke[]>([]);
+  useEffect(() => {
     const wrap = boardRef.current;
-    if (!wrap) return { x: 0, y: 0 };
-    const cell = wrap.querySelectorAll('button')[index];
-    if (!cell) return { x: 0, y: 0 };
+    if (!wrap || !round) { setStrokes([]); return; }
+    const buttons = wrap.querySelectorAll('button');
     const outer = wrap.getBoundingClientRect();
-    const rect = cell.getBoundingClientRect();
-    return { x: rect.left - outer.left + rect.width / 2, y: rect.top - outer.top + rect.height / 2 };
-  };
+    const center = (index: number) => {
+      const rect = buttons[index]?.getBoundingClientRect();
+      if (!rect) return { x: 0, y: 0 };
+      return { x: rect.left - outer.left + rect.width / 2, y: rect.top - outer.top + rect.height / 2 };
+    };
+    setStrokes(round.sosLines.map((line) => {
+      const a = center(line.cells[0]);
+      const b = center(line.cells[2]);
+      return { x1: a.x, y1: a.y, x2: b.x, y2: b.y, player: line.player };
+    }));
+  }, [round, boardSize, focus]);
 
   useEffect(() => {
     const syncFullscreen = () => {
@@ -147,13 +157,11 @@ export default function SosPage() {
                       onClick={() => put(index)}>{cell}</button>
                   ))}
                 </div>
-                {boardSize > 0 && (
+                {boardSize > 0 && strokes.length > 0 && (
                   <svg className="sos-scribe" viewBox={`0 0 ${boardSize} ${boardSize}`} aria-hidden="true">
-                    {round?.sosLines.map((line, key) => {
-                      const a = cellCenter(line.cells[0]);
-                      const b = cellCenter(line.cells[2]);
-                      return <line key={key} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`owner-${line.player}`} />;
-                    })}
+                    {strokes.map((s, key) => (
+                      <line key={key} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} className={`owner-${s.player}`} />
+                    ))}
                   </svg>
                 )}
               </div>
