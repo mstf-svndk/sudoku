@@ -1,4 +1,4 @@
-export const SIZES = [4, 6, 9, 12] as const;
+export const SIZES = [4, 5, 6, 9, 12] as const;
 export type Size = (typeof SIZES)[number];
 export const LEVELS = ['İlk adım', 'Kolay', 'Orta', 'Zor', 'Uzman'] as const;
 export type Mode = 'solo' | 'daily' | 'versus' | 'classroom';
@@ -10,7 +10,20 @@ export type Puzzle = {
   solution: number[];
 };
 export const boxShape = (size: Size): [number, number] =>
-  size === 4 ? [2, 2] : size === 6 ? [2, 3] : size === 9 ? [3, 3] : [3, 4];
+  size === 4
+    ? [2, 2]
+    : size === 5
+      ? [1, 5]
+      : size === 6
+        ? [2, 3]
+        : size === 9
+          ? [3, 3]
+          : [3, 4];
+/** 5×5'te kutu bölmesi yoktur; yalnız satır–sütun kuralı geçerlidir. */
+export const hasBoxDivisions = (size: Size): boolean => {
+  const [h, w] = boxShape(size);
+  return h > 1 && w < size;
+};
 export const symbol = (n: number) =>
   n > 9 ? String.fromCharCode(55 + n) : String(n);
 export function random(seed: number) {
@@ -191,7 +204,7 @@ export function generatePuzzle(
 export const puzzleCode = (p: Pick<Puzzle, 'size' | 'level' | 'seed'>) =>
   `1.${p.size}.${p.level}.${p.seed.toString(36)}`;
 export function parseCode(code: string) {
-  const match = /^1\.(4|6|9|12)\.([0-4])\.([0-9a-z]{1,7})$/.exec(code);
+  const match = /^1\.(4|5|6|9|12)\.([0-4])\.([0-9a-z]{1,7})$/.exec(code);
   if (!match) return null;
   const seed = parseInt(match[3], 36);
   if (seed > 0xffffffff) return null;

@@ -71,6 +71,7 @@ import {
 
 const sizeDescriptions: Record<Size, string> = {
   4: 'İlk keşif · 9 yaş ve yeni başlayanlar',
+  5: 'Mini 5×5 · kutular yok, yalnız satır ve sütun kuralı',
   6: 'Bir adım ileri · 9–11 yaş için güzel bir başlangıç',
   9: 'Klasik sudoku · 11 yaş ve üzeri',
   12: 'Büyük meydan okuma · Deneyimli oyuncular',

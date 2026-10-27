@@ -30,8 +30,11 @@ export default function WordHuntPage() {
   const [passing, setPassing] = useState(false);
   const [previous, setPrevious] = useState<string>();
   const [message, setMessage] = useState('');
+  /** Biten turun sonucu; yeni kelimeye geçerken diyaloğun eski kelimeyi göstermesi için ayrı tutulur. */
+  const [result, setResult] = useState<{ word: string; won: boolean } | null>(null);
 
   function begin(entry: WordEntry) {
+    setResult(null);
     setRound({ entry, guesses: [], mistakes: 0, hintUsed: false, outcome: null });
     setPrevious(entry.word);
     setMessage('');
@@ -55,19 +58,19 @@ export default function WordHuntPage() {
     setPassing(true);
   }
   function guess(letter: string) {
-    if (passing) return;
-    setRound((current) => {
-      if (!current || current.outcome || current.guesses.includes(letter)) return current;
-      const guesses = [...current.guesses, letter];
-      const mistakes = current.mistakes + (current.entry.word.includes(letter) ? 0 : 1);
-      const won = Array.from(current.entry.word).every((char) => char === ' ' || guesses.includes(char));
-      return { ...current, guesses, mistakes, outcome: won ? 'won' : mistakes >= limit ? 'lost' : null };
-    });
+    if (passing || !round || round.outcome || round.guesses.includes(letter)) return;
+    const guesses = [...round.guesses, letter];
+    const mistakes = round.mistakes + (round.entry.word.includes(letter) ? 0 : 1);
+    const won = Array.from(round.entry.word).every((char) => char === ' ' || guesses.includes(char));
+    const outcome = won ? 'won' : mistakes >= limit ? 'lost' : null;
+    if (outcome) setResult({ word: round.entry.word, won: outcome === 'won' });
+    setRound({ ...round, guesses, mistakes, outcome });
   }
   function next() {
+    setResult(null);
     if (mode === 'solo') begin(pickWord(category, previous));
     else {
-      setSetter((value) => value === 0 ? 1 : 0);
+      setSetter((value) => (value === 0 ? 1 : 0));
       setRound(null);
       setPassing(false);
     }
@@ -100,10 +103,10 @@ export default function WordHuntPage() {
           <div className="word-keyboard">{LETTERS.map((letter) => <button key={letter} disabled={round.guesses.includes(letter) || !!round.outcome} className={round.guesses.includes(letter) ? round.entry.word.includes(letter) ? 'correct' : 'wrong' : ''} onClick={() => guess(letter)} aria-label={`${letter} harfi`}>{letter}</button>)}</div>
           <div className="word-actions"><button className="text-button" onClick={() => setRound(null)}>Ayarlar</button></div>
         </section>}
-        <Dialog open={!!round?.outcome} onOpenChange={() => undefined}>
+        <Dialog open={!!result} onOpenChange={() => undefined}>
           <DialogContent className="workshop-dialog game-result-dialog" showCloseButton={false}>
-            <DialogTitle>{round?.outcome === 'won' ? 'Harika, kelimeyi buldun!' : 'Bu kez olmadı. Yeni kelimede dene!'}</DialogTitle>
-            <DialogDescription>Kelime: <strong>{round?.entry.word}</strong></DialogDescription>
+            <DialogTitle>{result?.won ? 'Harika, kelimeyi buldun!' : 'Bu kez olmadı. Yeni kelimede dene!'}</DialogTitle>
+            <DialogDescription>Kelime: <strong>{result?.word}</strong></DialogDescription>
             <button className="primary-button" onClick={next}><RotateCcw size={18} /> {mode === 'solo' ? 'Yeni kelime' : 'Rolleri değiştir'}</button>
             <Link href="/" className="text-button">Diğer oyunlara geç</Link>
           </DialogContent>
