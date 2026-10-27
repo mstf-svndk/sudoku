@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Link from 'next/link';
+import { AppBackLink } from '@/components/app-back-link';
 import {
   Grid2X2,
   Sparkles,
@@ -492,6 +493,7 @@ export default function Home() {
 
   return (
     <div className={`app-shell ${focus ? 'focus-mode' : ''}`}>
+      {focus && <AppBackLink />}
       <header className="site-header">
         <Link className="brand" href="/" aria-label="Zihin Atölyesi oyunları">
           <span className="brand-icon">

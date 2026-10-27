@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { AppBackLink } from '@/components/app-back-link';
 import { ArrowLeft, ArrowRight, Bot, Grid2X2, Maximize, Minimize, RotateCcw, UsersRound } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -103,6 +104,7 @@ export default function SosPage() {
 
   return (
     <div className={`app-shell sos-page ${focus ? 'sos-focus' : ''}`}>
+      {focus && <AppBackLink />}
       <header className="site-header">
         <Link className="brand" href="/" aria-label="Zihin Atölyesi ana sayfa">
           <span className="brand-icon"><Grid2X2 /></span>
@@ -151,8 +153,8 @@ export default function SosPage() {
                 </strong>
                 <span>{match.roundNumber}. raund</span>
               </output>
-              <div className={`sos-board-wrap size-${round?.size ?? SIDE}`} ref={boardRef}>
-                <div className={`sos-board size-${round?.size ?? SIDE}`} style={{ gridTemplateColumns: `repeat(${round?.size ?? SIDE}, 1fr)` }}>
+              <div className={`sos-board-wrap cells-${round?.size ?? SIDE}`} ref={boardRef}>
+                <div className={`sos-board cells-${round?.size ?? SIDE}`} style={{ gridTemplateColumns: `repeat(${round?.size ?? SIDE}, 1fr)` }}>
                   {round?.board.map((cell, index) => (
                     <button key={index} type="button"
                       className={`${index === round.lastMove?.index ? 'last' : ''} ${cell ? `sos-owner-${round.owners[index]}` : ''}`}

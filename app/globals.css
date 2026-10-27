@@ -2139,7 +2139,7 @@ footer {
 .sos-versus { color: #82928a; }
 .sos-status { display: flex; justify-content: space-between; gap: 15px; margin: 18px 0 10px; color: #2b624b; font-weight: 850; }
 .sos-status span { color: #78877d; font-weight: 650; white-space: nowrap; }
-.sos-board { display: grid; width: 100%; height: auto; aspect-ratio: 1; grid-auto-rows: 1fr; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0; touch-action: manipulation; }
+.sos-board { position: absolute; inset: 0; display: grid; grid-auto-rows: 1fr; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0; touch-action: manipulation; }
 .sos-board button { min-width: 0; min-height: 0; padding: 0; border: 2px solid transparent; border-radius: 8px; background: #fff; color: #2d654f; font-size: clamp(26px, 5vw, 54px); font-weight: 850; line-height: 1; position: relative; }
 .sos-board button:disabled { opacity: 1; color: #2d654f; }
 .sos-board button.last { border-color: #e76f3e; background: #fff3e8; }
@@ -2147,12 +2147,38 @@ footer {
 .sos-board button.sos-owner-0 { color: #1d4ed8; }
 .sos-board button.sos-owner-1 { color: #c2410c; }
 .sos-board button:not(:disabled):hover { background: #f0f9ef; }
+/* Her oyunda görünen sabit geri düğmesi */
+.app-back {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 13px 8px 11px;
+  border: 1px solid #d5e3da;
+  border-radius: 999px;
+  background: #ffffffeb;
+  color: #2f5a48;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 6px 18px #2433311f;
+  backdrop-filter: blur(6px);
+}
+.app-back:hover { border-color: #8bbfa3; color: #1f6a4b; }
+.sos-focus .app-back { background: #fffffff2; }
+@media (max-width: 600px) {
+  .app-back { top: 8px; left: 8px; min-height: 38px; padding: 7px 11px; font-size: 12px; }
+}
 /* 9x9 tahta: hücreler küçülür, yazı ve çizgiler incelir. */
-.sos-board.size-9 { gap: 3px; padding: 5px; }
-.sos-board.size-9 button { font-size: clamp(13px, 2.2vw, 26px); border-radius: 6px; border-width: 1px; }
-.sos-board-wrap.size-9 .sos-scribe line { stroke-width: 4; }
+.sos-board.cells-9 { gap: 3px; padding: 5px; }
+.sos-board.cells-9 button { font-size: clamp(13px, 2.2vw, 26px); border-radius: 6px; border-width: 1px; }
+.sos-board-wrap.cells-9 .sos-scribe line { stroke-width: 4; }
 /* SOS bağlama çizgileri: tahtanın üstünde, oyuncunun renginde tek çizgi. */
-.sos-board-wrap { position: relative; width: min(100%, 550px); margin: 0 auto; }
+.sos-board-wrap { position: relative; width: min(100%, 550px); aspect-ratio: 1; margin: 0 auto; }
 .sos-scribe { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
 .sos-scribe line { stroke-width: 7; stroke-linecap: round; opacity: .8; }
 .sos-scribe line.owner-0 { stroke: #1d4ed8; }
@@ -2347,6 +2373,6 @@ body:has(.focus-mode, .sos-focus) .pwa-update-notice { display: none; }
   .focus-mode:has(.race-workspace) .board-wrap { max-width: min(600px, calc(100dvh - 260px), calc(100vw - 44px)); }
   .focus-mode:has(.race-workspace):has(.sudoku-board.size-12) .board-wrap { max-width: min(600px, calc(100dvh - 295px), calc(100vw - 44px)); }
   .focus-mode .board-message { display: none; }
-  .sos-focus .sos-board { width: min(100%, calc(100dvh - 215px), 780px); }
+  .sos-focus .sos-board-wrap { width: min(100%, calc(100dvh - 215px), 780px); }
   .sos-focus .sos-last { display: none; }
 }
