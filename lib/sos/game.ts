@@ -1,4 +1,6 @@
 export const SIDE = 5;
+export const SIDES = [5, 9] as const;
+export type Side = (typeof SIDES)[number];
 export type Mark = 'S' | 'O';
 export type Player = 0 | 1;
 export type Difficulty = 'easy' | 'medium' | 'hard';
@@ -8,6 +10,7 @@ export type Move = { index: number; mark: Mark };
 export type LastMove = Move & { player: Player; points: number; lines: number[][] };
 export type SosLine = { cells: number[]; player: Player };
 export type Round = {
+  size: Side;
   board: (Mark | null)[];
   owners: (Player | null)[];
   sosLines: SosLine[];
@@ -18,6 +21,7 @@ export type Round = {
   winner: Player | null;
 };
 export type Match = {
+  size: Side;
   mode: MatchMode;
   difficulty: Difficulty;
   target: Target;
@@ -27,10 +31,11 @@ export type Match = {
   champion: Player | null;
 };
 
-export function newRound(first: Player = 0): Round {
+export function newRound(first: Player = 0, size: Side = SIDE): Round {
   return {
-    board: Array(SIDE * SIDE).fill(null),
-    owners: Array(SIDE * SIDE).fill(null),
+    size,
+    board: Array(size * size).fill(null),
+    owners: Array(size * size).fill(null),
     sosLines: [],
     scores: [0, 0],
     turn: first,
@@ -44,14 +49,16 @@ export function newMatch(
   mode: MatchMode,
   difficulty: Difficulty,
   target: Target,
+  size: Side = SIDE,
 ): Match {
   return {
+    size,
     mode,
     difficulty,
     target,
     wins: [0, 0],
     roundNumber: 1,
-    round: newRound(),
+    round: newRound(0, size),
     champion: null,
   };
 }
@@ -63,9 +70,13 @@ const directions = [
   [1, -1],
 ];
 
-export function linesAt(board: (Mark | null)[], index: number): number[][] {
-  const row = Math.floor(index / SIDE);
-  const col = index % SIDE;
+export function linesAt(
+  board: (Mark | null)[],
+  index: number,
+  size: Side = SIDE,
+): number[][] {
+  const row = Math.floor(index / size);
+  const col = index % size;
   const lines: number[][] = [];
   for (const [dr, dc] of directions) {
     for (let position = 0; position < 3; position++) {
@@ -75,12 +86,12 @@ export function linesAt(board: (Mark | null)[], index: number): number[][] {
       const endCol = startCol + 2 * dc;
       if (
         Math.min(startRow, endRow) < 0 ||
-        Math.max(startRow, endRow) >= SIDE ||
+        Math.max(startRow, endRow) >= size ||
         Math.min(startCol, endCol) < 0 ||
-        Math.max(startCol, endCol) >= SIDE
+        Math.max(startCol, endCol) >= size
       ) continue;
       const cells = [0, 1, 2].map(
-        (offset) => (startRow + offset * dr) * SIDE + startCol + offset * dc,
+        (offset) => (startRow + offset * dr) * size + startCol + offset * dc,
       );
       if (board[cells[0]] === 'S' && board[cells[1]] === 'O' && board[cells[2]] === 'S')
         lines.push(cells);
@@ -90,11 +101,12 @@ export function linesAt(board: (Mark | null)[], index: number): number[][] {
 }
 
 export function place(round: Round, move: Move): Round {
+  const size: Side = round.size ?? SIDE;
   if (
     round.finished ||
     !Number.isInteger(move.index) ||
     move.index < 0 ||
-    move.index >= SIDE * SIDE ||
+    move.index >= size * size ||
     round.board[move.index] !== null ||
     (move.mark !== 'S' && move.mark !== 'O')
   ) return round;
@@ -102,7 +114,7 @@ export function place(round: Round, move: Move): Round {
   const owners = [...round.owners];
   board[move.index] = move.mark;
   owners[move.index] = round.turn;
-  const lines = linesAt(board, move.index);
+  const lines = linesAt(board, move.index, size);
   // SOS line'ları tek tek saklanır: tahtanın üstine tek çizgiyle çizilir.
   const sosLines = [...round.sosLines, ...lines.map((cells) => ({ cells, player: round.turn }))];
   const scores: [number, number] = [...round.scores];
@@ -112,6 +124,7 @@ export function place(round: Round, move: Move): Round {
     ? scores[0] === scores[1] ? null : scores[0] > scores[1] ? 0 : 1
     : null;
   return {
+    size,
     board,
     owners,
     sosLines,
@@ -143,7 +156,7 @@ export function nextRound(match: Match): Match {
   return {
     ...match,
     roundNumber,
-    round: newRound(roundNumber % 2 === 0 ? 1 : 0),
+    round: newRound(roundNumber % 2 === 0 ? 1 : 0, match.size ?? SIDE),
   };
 }
 
@@ -193,7 +206,7 @@ export function chooseAiMove(
     const gained = result.lastMove!.points;
     const value = difficulty === 'medium'
       ? gained * 20 + (result.finished ? evaluate(result, ai) : 0)
-      : search(result, ai, 2) + gained * 2;
+      : search(result, ai, (round.size ?? SIDE) >= 9 ? 1 : 2) + gained * 2;
     if (value > best) {
       best = value;
       selected = [move];

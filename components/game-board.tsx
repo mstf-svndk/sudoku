@@ -11,7 +11,7 @@ import {
   Flag,
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { boxShape, candidates, hasBoxDivisions, peers, symbol, type Puzzle } from '@/lib/sudoku';
+import { boxShape, candidates, peers, symbol, type Puzzle } from '@/lib/sudoku';
 import { isComplete, move, undo, type Player } from '@/lib/game';
 
 type Props = {
@@ -214,24 +214,21 @@ export function GameBoard({
                 className={`cell ${givens[i] ? 'given' : 'entered'} ${related ? 'related' : ''} ${same ? 'same-value' : ''} ${selected === i ? 'selected' : ''} ${wrong ? 'wrong' : ''}`}
                 style={{
                   borderRightWidth:
-                    i % size === size - 1
-                      ? 0
-                      : hasBoxDivisions(size) && ((i % size) + 1) % w === 0
-                        ? 2
+                    ((i % size) + 1) % w === 0 && i % size !== size - 1
+                      ? 2
+                      : i % size === size - 1
+                        ? 0
                         : 1,
                   borderRightColor:
-                    hasBoxDivisions(size) && ((i % size) + 1) % w === 0
-                      ? '#455e55'
-                      : undefined,
+                    ((i % size) + 1) % w === 0 ? '#455e55' : undefined,
                   borderBottomWidth:
-                    i >= size * (size - 1)
-                      ? 0
-                      : hasBoxDivisions(size) &&
-                          (Math.floor(i / size) + 1) % h === 0
-                        ? 2
+                    (Math.floor(i / size) + 1) % h === 0 &&
+                    i < size * (size - 1)
+                      ? 2
+                      : i >= size * (size - 1)
+                        ? 0
                         : 1,
                   borderBottomColor:
-                    hasBoxDivisions(size) &&
                     (Math.floor(i / size) + 1) % h === 0
                       ? '#455e55'
                       : undefined,

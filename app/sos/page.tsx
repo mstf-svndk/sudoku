@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Bot, Grid2X2, Maximize, Minimize, RotateCcw, UsersRound } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import {
-  SIDE, chooseAiMove, newMatch, nextRound, play,
-  type Difficulty, type Mark, type Match, type MatchMode, type Target,
+  SIDE, SIDES, chooseAiMove, newMatch, nextRound, play,
+  type Difficulty, type Mark, type Match, type MatchMode, type Side, type Target,
 } from '@/lib/sos/game';
 
 const difficulties: Record<Difficulty, string> = {
@@ -17,6 +17,7 @@ export default function SosPage() {
   const [mode, setMode] = useState<MatchMode>('local');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [target, setTarget] = useState<Target>(3);
+  const [side, setSide] = useState<Side>(5);
   const [match, setMatch] = useState<Match | null>(null);
   const [mark, setMark] = useState<Mark>('S');
   const [focus, setFocus] = useState(false);
@@ -78,7 +79,7 @@ export default function SosPage() {
   }, [match, aiTurn]);
 
   function start() {
-    setMatch(newMatch(mode, difficulty, target));
+    setMatch(newMatch(mode, difficulty, target, side));
     setMark('S');
   }
   function put(index: number) {
@@ -125,6 +126,9 @@ export default function SosPage() {
             {mode === 'ai' && <div className="sos-field"><span>Yapay zekâ seviyesi</span><div className="sos-options">
               {(['easy', 'medium', 'hard'] as Difficulty[]).map((value) => <button key={value} className={difficulty === value ? 'selected' : ''} onClick={() => setDifficulty(value)} aria-pressed={difficulty === value}>{difficulties[value]}</button>)}
             </div></div>}
+            <div className="sos-field"><span>Tahta boyutu</span><div className="sos-options">
+              {SIDES.map((value) => <button key={value} className={side === value ? 'selected' : ''} onClick={() => setSide(value)} aria-pressed={side === value}>{value}×{value}{value === 5 ? ' · hızlı' : ' · geniş'}</button>)}
+            </div></div>
             <div className="sos-field"><span>Seriyi kazanan</span><div className="sos-options">
               {([3, 5, 10] as Target[]).map((value) => <button key={value} className={target === value ? 'selected' : ''} onClick={() => setTarget(value)} aria-pressed={target === value}>{value} galibiyet</button>)}
             </div></div>
@@ -147,12 +151,12 @@ export default function SosPage() {
                 </strong>
                 <span>{match.roundNumber}. raund</span>
               </output>
-              <div className="sos-board-wrap" ref={boardRef}>
-                <div className="sos-board" style={{ gridTemplateColumns: `repeat(${SIDE}, 1fr)` }}>
+              <div className={`sos-board-wrap size-${round?.size ?? SIDE}`} ref={boardRef}>
+                <div className={`sos-board size-${round?.size ?? SIDE}`} style={{ gridTemplateColumns: `repeat(${round?.size ?? SIDE}, 1fr)` }}>
                   {round?.board.map((cell, index) => (
                     <button key={index} type="button"
                       className={`${index === round.lastMove?.index ? 'last' : ''} ${cell ? `sos-owner-${round.owners[index]}` : ''}`}
-                      aria-label={`${Math.floor(index / SIDE) + 1}. satır ${index % SIDE + 1}. sütun${cell ? `, ${cell}` : ', boş'}${index === round.lastMove?.index ? ', son hamle' : ''}`}
+                      aria-label={`${Math.floor(index / (round?.size ?? SIDE)) + 1}. satır ${index % (round?.size ?? SIDE) + 1}. sütun${cell ? `, ${cell}` : ', boş'}${index === round.lastMove?.index ? ', son hamle' : ''}`}
                       disabled={!!cell || round.finished || aiTurn}
                       onClick={() => put(index)}>{cell}</button>
                   ))}
@@ -176,7 +180,7 @@ export default function SosPage() {
             </section>
             <aside className="sos-side">
               <h2>Oyun bilgisi</h2>
-              <p>{match.mode === 'ai' ? `Yapay zekâ · ${difficulties[match.difficulty]}` : 'Aynı cihazda iki kişi'} · {match.target} galibiyetlik seri</p>
+              <p>{match.mode === 'ai' ? `Yapay zekâ · ${difficulties[match.difficulty]}` : 'Aynı cihazda iki kişi'} · {match.target} galibiyetlik seri · {match.round.size}×{match.round.size} tahta</p>
               <ul><li>SOS yatay, dikey ve çapraz kurulabilir.</li><li>Bir hamlede birden fazla SOS yapabilirsin.</li><li>SOS yapan oyuncu yeniden oynar.</li><li>Tur bitince daha çok puan alan kazanır.</li></ul>
               <button className="text-button" onClick={() => setMatch(null)}>Maç ayarlarına dön</button>
             </aside>
@@ -187,7 +191,7 @@ export default function SosPage() {
             <DialogTitle>{match?.champion !== null && match?.champion !== undefined ? `${playerName(match.champion)} seriyi kazandı!` : round?.winner === null ? 'Raund berabere' : `${playerName(round?.winner ?? 0)} kazandı`}</DialogTitle>
             <DialogDescription>Raund puanı {round?.scores[0]} – {round?.scores[1]} · Seri {match?.wins[0]} – {match?.wins[1]}</DialogDescription>
             {match?.champion === null && <button className="primary-button" onClick={() => setMatch((current) => current ? nextRound(current) : current)}>Sonraki raund <ArrowRight size={18} /></button>}
-            <button className="quiet-button" onClick={() => setMatch(newMatch(match!.mode, match!.difficulty, match!.target))}><RotateCcw size={17} /> Yeniden maç</button>
+            <button className="quiet-button" onClick={() => setMatch(newMatch(match!.mode, match!.difficulty, match!.target, match!.size))}><RotateCcw size={17} /> Yeniden maç</button>
             <Link href="/" className="text-button">Diğer oyunlara geç</Link>
           </DialogContent>
         </Dialog>

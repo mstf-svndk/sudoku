@@ -2147,6 +2147,10 @@ footer {
 .sos-board button.sos-owner-0 { color: #1d4ed8; }
 .sos-board button.sos-owner-1 { color: #c2410c; }
 .sos-board button:not(:disabled):hover { background: #f0f9ef; }
+/* 9x9 tahta: hücreler küçülür, yazı ve çizgiler incelir. */
+.sos-board.size-9 { gap: 3px; padding: 5px; }
+.sos-board.size-9 button { font-size: clamp(13px, 2.2vw, 26px); border-radius: 6px; border-width: 1px; }
+.sos-board-wrap.size-9 .sos-scribe line { stroke-width: 4; }
 /* SOS bağlama çizgileri: tahtanın üstünde, oyuncunun renginde tek çizgi. */
 .sos-board-wrap { position: relative; width: min(100%, 550px); margin: 0 auto; }
 .sos-scribe { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }

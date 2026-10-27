@@ -256,7 +256,6 @@ export function calculateScore(
   const blanks = puzzle.givens.filter((value) => value === 0).length;
   const sizeBase: Record<Size, number> = {
     4: 80,
-    5: 110,
     6: 160,
     9: 280,
     12: 400,
