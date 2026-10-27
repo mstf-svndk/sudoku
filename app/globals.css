@@ -2139,7 +2139,7 @@ footer {
 .sos-versus { color: #82928a; }
 .sos-status { display: flex; justify-content: space-between; gap: 15px; margin: 18px 0 10px; color: #2b624b; font-weight: 850; }
 .sos-status span { color: #78877d; font-weight: 650; white-space: nowrap; }
-.sos-board { display: grid; width: 100%; aspect-ratio: 1; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0; touch-action: manipulation; }
+.sos-board { display: grid; width: 100%; height: auto; aspect-ratio: 1; grid-auto-rows: 1fr; gap: 5px; padding: 7px; border-radius: 15px; background: #deebe2; margin: 0; touch-action: manipulation; }
 .sos-board button { min-width: 0; min-height: 0; padding: 0; border: 2px solid transparent; border-radius: 8px; background: #fff; color: #2d654f; font-size: clamp(26px, 5vw, 54px); font-weight: 850; line-height: 1; position: relative; }
 .sos-board button:disabled { opacity: 1; color: #2d654f; }
 .sos-board button.last { border-color: #e76f3e; background: #fff3e8; }
