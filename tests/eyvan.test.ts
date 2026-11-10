@@ -71,6 +71,34 @@ void test('dar koridorda rakip kalenin üstünden atlanır', () => {
   assert.deepEqual(pawnMoves(round, 0), [at(3, 6)]);
 });
 
+void test('rakip kalenin üstünden her zaman atlanır', () => {
+  const round: Round = { ...newRound(), pawns: [at(3, 4), at(3, 5)] };
+  const moves = pawnMoves(round, 0);
+  // Yan kareler boşken de atlama yasal olmalı.
+  assert.ok(moves.includes(at(3, 6)), 'düz atlama yok');
+  assert.ok(moves.includes(at(2, 4)) && moves.includes(at(4, 4)) && moves.includes(at(3, 3)));
+  // Aynı şey ters yönde de geçerli.
+  assert.ok(pawnMoves(round, 1).includes(at(3, 3)));
+  const jumped = applyMove(round, { type: 'move', to: at(3, 6) });
+  assert.equal(jumped.pawns[0], at(3, 6));
+  // Arkadaki kare duvarlıysa atlama olmaz.
+  const walled = withWall(round, { orient: 'v', r: 3, c: 5, size: 1 });
+  assert.equal(pawnMoves(walled, 0).includes(at(3, 6)), false);
+});
+
+void test('surlar artı oluşturacak şekilde üst üste konmaz', () => {
+  const round = withWall(newRound(), { orient: 'v', r: 3, c: 3, size: 2 });
+  // Yatay uzun sur dikey surun tam ortasından geçer: artı olur, yasak.
+  assert.equal(canPlaceWall(round, 1, { orient: 'h', r: 3, c: 3, size: 2 }), false);
+  // Uç uca değen (artı olmayan) yerleşim serbest.
+  assert.equal(canPlaceWall(round, 1, { orient: 'h', r: 3, c: 4, size: 2 }), true);
+  // Kısa sur artı oluşturmaz.
+  assert.equal(canPlaceWall(round, 1, { orient: 'h', r: 3, c: 3, size: 1 }), true);
+  // Simetrik yön: yatay uzun surun ortasından dikey uzun sur geçemez.
+  const round2 = withWall(newRound(), { orient: 'h', r: 3, c: 3, size: 2 });
+  assert.equal(canPlaceWall(round2, 1, { orient: 'v', r: 3, c: 3, size: 2 }), false);
+});
+
 void test('at karesi iki adım hakkı verir, bir kez kullanılır', () => {
   let round: Round = { ...newRound(), pawns: [at(1, 5), at(5, 4)] };
   const landed = applyMove(round, { type: 'move', to: at(1, 6) });

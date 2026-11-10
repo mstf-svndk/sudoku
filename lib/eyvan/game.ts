@@ -116,6 +116,30 @@ export function isBlocked(round: Round, segment: Segment): boolean {
   return segment.orient === 'v' ? round.v[segment.index] === true : round.h[segment.index] === true;
 }
 
+/**
+ * Yeni sur, var olan dik surun ortasından geçip "artı" oluşturur mu?
+ * Her iki surun da ortasından geçen kesişme yasak; uç uca değen L/T birleşimler serbest.
+ */
+export function crossesWall(round: Round, wall: Wall): boolean {
+  if (wall.size < 2) return false;
+  if (wall.orient === 'v') {
+    // Dikey surun ortası (r+1) hizasındaki noktadan geçen yatay sur var mı?
+    for (let k = 0; k < wall.size - 1; k++) {
+      const r = wall.r + k;
+      const c = wall.c;
+      if (round.h[r * SIDE + c] && round.h[r * SIDE + c + 1]) return true;
+    }
+    return false;
+  }
+  // Yatay surun ortası (c+1) hizasındaki noktadan geçen dikey sur var mı?
+  for (let k = 0; k < wall.size - 1; k++) {
+    const r = wall.r;
+    const c = wall.c + k;
+    if (round.v[r * (SIDE - 1) + c] && round.v[(r + 1) * (SIDE - 1) + c]) return true;
+  }
+  return false;
+}
+
 export function openSteps(round: Round, cell: number): Step[] {
   const list: Step[] = [];
   for (let dir = 0; dir < 4; dir++) {
@@ -229,23 +253,23 @@ export function pathToGoal(round: Round, player: Player): number[] {
   return path.reverse();
 }
 
-/** Kalenin gidebileceği kareler; kuşatma altındaysa rakip kalenin üstünden atlar. */
+/** Kalenin gidebileceği kareler; rakibin kalesinin üstünden her zaman atlanabilir. */
 export function pawnMoves(round: Round, player: Player = round.turn): number[] {
   const from = round.pawns[player];
   const opponent = round.pawns[player === 0 ? 1 : 0];
-  const free = openSteps(round, from)
-    .filter((step) => step.to !== opponent)
-    .map((step) => step.to);
-  if (free.length) return free;
-  // Kural: gidecek başka yer yoksa rakip kalenin üzerinden atlanır.
-  const jumps: number[] = [];
+  const moves: number[] = [];
   for (let dir = 0; dir < 4; dir++) {
     const step = stepInfo(from, dir);
-    if (!step || step.to !== opponent || isBlocked(round, step)) continue;
+    if (!step || isBlocked(round, step)) continue;
+    if (step.to !== opponent) {
+      moves.push(step.to);
+      continue;
+    }
+    // Rakibin kalesi önünde: üzerinden atlayıp arkasındaki boş kareye konar.
     const landing = stepInfo(opponent, dir);
-    if (landing && !isBlocked(round, landing) && landing.to !== from) jumps.push(landing.to);
+    if (landing && !isBlocked(round, landing)) moves.push(landing.to);
   }
-  return jumps;
+  return moves;
 }
 
 /** At karesi bonusu: iki adımda ulaşılabilen kareler (rakibin kalesi hariç). */
@@ -298,6 +322,7 @@ export function canPlaceWall(round: Round, player: Player, wall: Wall): boolean 
   if (!validWall(wall)) return false;
   if (wall.size === 2 ? round.big[player] <= 0 : round.small[player] <= 0) return false;
   for (const segment of segmentsOf(wall)) if (isBlocked(round, segment)) return false;
+  if (crossesWall(round, wall)) return false;
   const next = withWall(round, wall);
   return reachable(next, 0) && reachable(next, 1);
 }

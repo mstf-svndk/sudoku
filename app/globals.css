@@ -2441,6 +2441,7 @@ body:has(.focus-mode, .sos-focus) .pwa-update-notice { display: none; }
 /* Konan surlar: iki katı yükseklik hissi veren gölgeli ahşap blok. */
 .eyvan-wall { position: absolute; z-index: 4; border-radius: 4px; background: linear-gradient(180deg, #cf7a4a, #a0502a 70%, #7d3a1c); box-shadow: 0 5px 0 #5c2a11, 0 9px 14px #0000003d; animation: eyvan-wall-drop 0.22s ease; }
 .eyvan-wall.h { background: linear-gradient(180deg, #da8656, #a9552c 70%, #813d1e); }
+.eyvan-wall.ghost { z-index: 5; opacity: 0.45; pointer-events: none; animation: none; box-shadow: 0 3px 0 #5c2a1155; }
 @keyframes eyvan-wall-drop { from { transform: translateY(-7px); opacity: 0.25; } to { transform: translateY(0); opacity: 1; } }
 
 /* Kaleler: 3B duran kuleler. */
