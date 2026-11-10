@@ -55,14 +55,14 @@ export default function EyvanPage() {
   const [history, setHistory] = useState<Round[]>([]);
   const [notice, setNotice] = useState('');
   const [focus, setFocus] = useState(false);
-  const [thinking, setThinking] = useState(false);
   const roundRef = useRef<Round | null>(null);
 
   useEffect(() => {
     roundRef.current = round;
   }, [round]);
 
-  const humanTurn = !!round && !(mode === 'ai' && round.turn === 1) && !round.finished;
+  const aiTurn = !!round && mode === 'ai' && round.turn === 1 && !round.finished;
+  const humanTurn = !!round && !aiTurn && !round.finished;
 
   const targets = useMemo(() => {
     if (!round || !humanTurn || round.phase === 'cannon') return new Set<number>();
@@ -72,20 +72,14 @@ export default function EyvanPage() {
 
   useEffect(() => {
     if (!round || round.finished || mode !== 'ai' || round.turn !== 1) return;
-    setThinking(true);
     const timer = window.setTimeout(() => {
       const current = roundRef.current;
-      if (!current || current.finished || current.turn !== 1) {
-        setThinking(false);
-        return;
-      }
+      if (!current || current.finished || current.turn !== 1) return;
       const move = chooseAiMove(current, difficulty);
       const next = move ? applyMove(current, move) : current;
-      if (next !== current) {
-        setHistory((stack) => [...stack, current]);
-        setRound(next);
-      }
-      setThinking(false);
+      if (next === current) return;
+      setHistory((stack) => [...stack, current]);
+      setRound(next);
     }, 460);
     return () => window.clearTimeout(timer);
   }, [round, mode, difficulty]);
@@ -201,7 +195,7 @@ export default function EyvanPage() {
         ? `${name(round.turn)} at karesinde — iki adım hakkı var`
         : round.phase === 'cannon'
           ? `${name(round.turn)} top karesinde — bir suru dışarı atacak`
-          : thinking
+          : aiTurn
             ? 'Yapay zekâ düşünüyor…'
             : `Sıra: ${name(round.turn)}`;
 
