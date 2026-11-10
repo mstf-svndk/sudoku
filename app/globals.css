@@ -2099,7 +2099,7 @@ footer {
 .home-intro h1 { font-size: clamp(34px, 5vw, 54px); margin: 12px 0; }
 .home-intro h1 span, .sos-heading h1 span { color: var(--orange); }
 .home-intro p, .sos-heading p { color: var(--muted-foreground); margin: 0; line-height: 1.6; }
-.workshop-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.workshop-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .workshop-game-card { display: flex; flex-direction: column; min-width: 0; min-height: 380px; padding: 22px; border: 1px solid var(--border); border-radius: 22px; background: #fff; box-shadow: 0 12px 32px #2433310b; transition: transform .2s, box-shadow .2s; }
 .workshop-game-card:hover { transform: translateY(-4px); box-shadow: 0 18px 35px #2433311a; }
 .choice-art { height: 120px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 23px; }
@@ -2108,6 +2108,9 @@ footer {
 .sos-art { background: #eaf4ee; }
 .sos-art span { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 10px; background: white; color: #286753; font-size: 30px; font-weight: 850; box-shadow: 0 3px 8px #28725a24; }
 .word-art { color: #5959a6; background: #efedfa; }
+.eyvan-art { background: #eef1ff; }
+.eyvan-art i { display: block; width: 46px; height: 46px; border-radius: 9px; background: #fff; box-shadow: 0 5px 0 #cbd6f2, 0 9px 16px #1d4ed81f; }
+.eyvan-art i:nth-child(2) { transform: translateY(-10px); background: linear-gradient(180deg, #fff, #eaf0ff); box-shadow: 0 5px 0 #b9c8ee, 0 14px 20px #1d4ed826; }
 .choice-copy { display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .choice-tag { color: #718078; font-size: 10px; letter-spacing: 1.5px; font-weight: 850; }
 .choice-copy strong { font-size: 26px; line-height: 1.1; }
@@ -2375,4 +2378,119 @@ body:has(.focus-mode, .sos-focus) .pwa-update-notice { display: none; }
   .focus-mode .board-message { display: none; }
   .sos-focus .sos-board-wrap { width: min(100%, calc(100dvh - 215px), 780px); }
   .sos-focus .sos-last { display: none; }
+}
+
+/* ================= EYVAN (kale yarışı, 9x9) ================= */
+.eyvan-page { --eyvan-one: #1d4ed8; --eyvan-two: #c2410c; }
+.eyvan-main { max-width: 1220px; margin: 0 auto; padding: 44px 36px 70px; }
+.eyvan-heading { margin-bottom: 26px; }
+.eyvan-heading h1 { font-size: clamp(36px, 5vw, 52px); margin: 6px 0; }
+.eyvan-heading h1 span { color: var(--orange); }
+.eyvan-heading p { color: var(--muted-foreground); margin: 0; line-height: 1.6; max-width: 640px; }
+.eyvan-setup { max-width: 720px; padding: 28px; background: #fff; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 28px #2433310b; }
+.eyvan-setup h2 { margin: 0 0 22px; font-size: 23px; }
+.eyvan-start { width: 100%; justify-content: center; min-height: 52px; }
+.eyvan-layout { display: grid; grid-template-columns: minmax(0, 700px) minmax(230px, 1fr); gap: 20px; align-items: start; }
+.eyvan-panel { min-width: 0; padding: 22px; background: #fff; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 28px #2433310b; }
+.eyvan-players { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.eyvan-player { display: grid; gap: 2px; padding: 10px 12px; border: 1.5px solid #e2e8e4; border-radius: 12px; }
+.eyvan-player-name { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 800; }
+.eyvan-player strong { font-size: 22px; line-height: 1.1; }
+.eyvan-player strong small { font-size: 11px; font-weight: 700; color: #6d7c74; }
+.eyvan-player em { font-style: normal; font-size: 12px; color: #66786c; }
+.eyvan-player.player-0 { border-left: 4px solid var(--eyvan-one); }
+.eyvan-player.player-1 { border-left: 4px solid var(--eyvan-two); }
+.eyvan-player.player-0.active { background: #f2f6ff; border-color: #9db8ee; }
+.eyvan-player.player-1.active { background: #fff5ef; border-color: #e6a17f; }
+.eyvan-player .sos-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.eyvan-player .dot-0 { background: var(--eyvan-one); }
+.eyvan-player .dot-1 { background: var(--eyvan-two); }
+.eyvan-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 8px; padding: 8px 10px; border-radius: 9px; font-weight: 850; }
+.eyvan-status strong { font-size: 15px; }
+.eyvan-status span { font-size: 12px; font-weight: 700; opacity: 0.75; white-space: nowrap; }
+.eyvan-status.turn-0 { background: #eaf0ff; color: #1a3f9c; }
+.eyvan-status.turn-1 { background: #fff0e4; color: #a2470f; }
+
+/* Tahta: ahşap çerçeve + perspektif. Düz görünümde eğim kalkar. */
+.eyvan-stage { display: flex; justify-content: center; padding: 10px 6px 20px; perspective: 1500px; perspective-origin: 50% 26%; }
+.eyvan-frame { width: min(100%, 620px); padding: 12px; border-radius: 18px; background: linear-gradient(158deg, #b07b45, #7d4f24 62%, #6b4220); box-shadow: 0 30px 44px -22px #3b241348, inset 0 2px 0 #d9a86c, inset 0 -3px 0 #4e2f13; transition: transform 0.45s ease; }
+.eyvan-stage.is-3d .eyvan-frame { transform: rotateX(15deg); }
+.eyvan-stage.is-flat .eyvan-frame { transform: none; }
+.eyvan-board { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; background: #f3e2c5; box-shadow: inset 0 0 0 2px #6b431f, inset 0 12px 28px #0000002b; }
+.eyvan-cell { position: absolute; display: grid; place-items: center; padding: 0; border: 1px solid #e3cda7; border-radius: 2px; background: #fbf2e0; color: #9b7434; font-size: 12px; line-height: 1; touch-action: manipulation; }
+.eyvan-cell:disabled { opacity: 1; }
+.eyvan-cell.goal-0 { background: #e8efff; color: var(--eyvan-one); box-shadow: inset 0 0 0 2px #1d4ed84d; }
+.eyvan-cell.goal-1 { background: #fff0e6; color: var(--eyvan-two); box-shadow: inset 0 0 0 2px #c2410c4d; }
+.eyvan-cell.knight { background: #fff8d8; color: #a8750c; }
+.eyvan-cell.cannon { background: #edf2f7; color: #4f6478; }
+.eyvan-cell.used { opacity: 0.45; }
+.eyvan-cell.last { box-shadow: inset 0 0 0 3px #2f79b8; }
+.eyvan-cell.valid { box-shadow: inset 0 0 0 3px #f0a06a; background: #fff3e4; cursor: pointer; }
+.eyvan-cell.valid::after { content: ''; position: absolute; right: 3px; bottom: 3px; width: 7px; height: 7px; border-radius: 50%; background: #e76f3e; }
+.eyvan-cell:not(:disabled):hover { background: #fff9ee; }
+
+/* Sur yuvaları: iki kare arasındaki çizgiler (dokunulunca sur konur). */
+.eyvan-slot { position: absolute; z-index: 3; display: block; padding: 0; border: 0; background: transparent; cursor: pointer; touch-action: manipulation; }
+.eyvan-slot::after { content: ''; display: block; border-radius: 6px; background: #b97b45; opacity: 0; transition: opacity 0.15s ease; }
+.eyvan-slot.v::after { width: 8px; height: 100%; margin: 0 auto; }
+.eyvan-slot.h::after { width: 100%; height: 8px; margin: auto 0; }
+.eyvan-slot.cannon { z-index: 7; }
+.eyvan-slot.cannon::after { background: #c2410c; opacity: 0.35; }
+.eyvan-slot:hover::after, .eyvan-slot:focus-visible::after { opacity: 0.5; }
+
+/* Konan surlar: iki katı yükseklik hissi veren gölgeli ahşap blok. */
+.eyvan-wall { position: absolute; z-index: 4; border-radius: 4px; background: linear-gradient(180deg, #cf7a4a, #a0502a 70%, #7d3a1c); box-shadow: 0 5px 0 #5c2a11, 0 9px 14px #0000003d; animation: eyvan-wall-drop 0.22s ease; }
+.eyvan-wall.h { background: linear-gradient(180deg, #da8656, #a9552c 70%, #813d1e); }
+@keyframes eyvan-wall-drop { from { transform: translateY(-7px); opacity: 0.25; } to { transform: translateY(0); opacity: 1; } }
+
+/* Kaleler: 3B duran kuleler. */
+.eyvan-pawn { position: absolute; z-index: 6; width: calc(100% / 9 * 0.6); aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; transition: left 0.22s ease, top 0.22s ease; }
+.eyvan-pawn i { position: absolute; inset: 0; display: block; border-radius: 26% 26% 16% 16%; background: linear-gradient(180deg, #6d9bff, #1d4ed8 62%, #12307f); box-shadow: inset 0 -5px 0 #0e2a72, 0 7px 0 #10276b, 0 14px 18px #00000045; }
+.eyvan-pawn i::before { content: ''; position: absolute; left: 16%; right: 16%; top: -18%; height: 26%; border-radius: 4px 4px 0 0; background: inherit; }
+.eyvan-pawn.pawn-1 i { background: linear-gradient(180deg, #f79a68, #c2410c 62%, #7d2805); box-shadow: inset 0 -5px 0 #742304, 0 7px 0 #6d2103, 0 14px 18px #00000045; }
+.eyvan-pawn.active i { outline: 3px solid #ffffffcc; outline-offset: 1px; animation: eyvan-pawn-pulse 1.6s ease-in-out infinite; }
+@keyframes eyvan-pawn-pulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+.eyvan-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+.eyvan-wall-picker { display: flex; gap: 8px; }
+.eyvan-wall-picker button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 1.5px solid #d6e2da; border-radius: 10px; background: #fff; color: #315e49; font-size: 13px; font-weight: 750; }
+.eyvan-wall-picker button small { padding: 1px 7px; border-radius: 999px; background: #eef1f3; font-size: 11px; font-weight: 850; }
+.eyvan-wall-picker button.selected { border-color: #2f7958; background: #eaf7ec; box-shadow: inset 0 0 0 1px #2f7958; }
+.eyvan-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.eyvan-cannon { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 12px; padding: 12px 14px; border: 1px solid #dbe6f1; border-radius: 12px; background: #f3f7fb; }
+.eyvan-cannon p { flex: 1 1 100%; margin: 0; font-size: 13px; color: #41576b; line-height: 1.5; }
+.eyvan-notice { min-height: 20px; margin: 12px 0 0; color: #61756b; font-size: 13px; }
+.eyvan-side { padding: 23px; background: #fff; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 28px #2433310b; color: #576d61; line-height: 1.6; }
+.eyvan-side h2 { margin: 0 0 14px; font-size: 21px; }
+.eyvan-side ul { margin: 0; padding-left: 19px; font-size: 14px; }
+.eyvan-side li { margin: 8px 0; }
+.eyvan-side li svg { vertical-align: -2px; }
+.eyvan-side-note { margin: 16px 0; font-size: 12px; color: #6d7c74; }
+
+.eyvan-focus { height: 100dvh; overflow: hidden; }
+.eyvan-focus .site-header, .eyvan-focus .eyvan-heading, .eyvan-focus .eyvan-side { display: none; }
+.eyvan-focus .eyvan-main { max-width: none; padding: 8px 10px; height: 100dvh; overflow-y: auto; }
+.eyvan-focus .eyvan-layout { display: block; }
+.eyvan-focus .eyvan-panel { max-width: min(100%, 1020px); margin: auto; padding: 10px; }
+.eyvan-focus .eyvan-frame { width: min(100%, calc(100dvh - 250px), 760px); }
+.eyvan-focus .eyvan-player em { display: none; }
+
+@media (max-width: 1080px) {
+  .workshop-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 850px) {
+  .eyvan-layout { grid-template-columns: 1fr; }
+  .eyvan-side { max-width: 700px; }
+}
+@media (max-width: 600px) {
+  .eyvan-main { padding: 26px 14px 50px; }
+  .eyvan-setup, .eyvan-panel { padding: 15px; }
+  .eyvan-frame { padding: 8px; border-radius: 14px; }
+  .eyvan-cell svg { width: 11px; height: 11px; }
+  .eyvan-player { padding: 8px; }
+  .eyvan-player strong { font-size: 18px; }
+  .eyvan-player em { font-size: 11px; }
+  .eyvan-status { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .eyvan-wall-picker button { min-height: 42px; padding: 7px 11px; font-size: 12px; }
+  .eyvan-tools .quiet-button span { display: none; }
 }

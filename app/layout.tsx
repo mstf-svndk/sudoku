@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { PwaUpdater } from '@/components/pwa-updater';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'Zihin Atölyesi — Sudoku, SOS ve Kelime Avı',
+  title: 'Zihin Atölyesi — Sudoku, SOS, Eyvan ve Kelime Avı',
   description:
-    'Sudoku, SOS ve Kelime Avı: her yaşta düşünerek oyna. Ücretsiz, reklamsız ve girişsiz.',
+    'Sudoku, SOS, Eyvan ve Kelime Avı: her yaşta düşünerek oyna. Ücretsiz, reklamsız ve girişsiz.',
   manifest: '/manifest.webmanifest',
   icons: { icon: '/icon.svg', apple: '/icon-192.png' },
 };

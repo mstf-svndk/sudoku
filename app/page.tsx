@@ -36,6 +36,11 @@ export default function Home() {
             <span className="choice-copy"><span className="choice-tag">STRATEJİ OYUNU</span><strong>SOS</strong><span>Yan yana veya yapay zekâya karşı oyna. Harfleri yerleştir, SOS yap ve seriyi kazan.</span></span>
             <span className="choice-go">Oynamaya başla <ArrowRight size={18} /></span>
           </Link>
+          <Link className="workshop-game-card eyvan-choice" href="/eyvan">
+            <span className="choice-art eyvan-art" aria-hidden="true"><i /><i /><i /></span>
+            <span className="choice-copy"><span className="choice-tag">KALE YARIŞI</span><strong>Eyvan</strong><span>Kaleni karşı köşedeki kaleye ulaştır, surlarınla yolu kapat. Aynı cihazda ya da yapay zekâya karşı.</span></span>
+            <span className="choice-go">Oynamaya başla <ArrowRight size={18} /></span>
+          </Link>
           <Link className="workshop-game-card word-choice" href="/kelime-avi">
             <span className="choice-art word-art" aria-hidden="true"><WholeWord size={60} strokeWidth={1.6} /></span>
             <span className="choice-copy"><span className="choice-tag">KELİME OYUNU</span><strong>Kelime Avı</strong><span>İpucunu oku, harfleri keşfet. Tek başına veya aynı cihazda arkadaşınla oyna.</span></span>
